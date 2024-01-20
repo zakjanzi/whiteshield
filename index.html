@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="./assets/css/output.css"
+      crossorigin="anonymous"
+    />
+    <script src="
+https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js
+"></script>
+    <title>WhiteShield</title>
+  </head>
+  <body class="w-100 tw-max-w-full tw-min-h-screen">
+    <nav class="navbar navbar-expand-lg tw-bg-[var(--dark-teal-500)] tw-h-24">
+      <div class="container-fluid px-0">
+        <a class="navbar-brand tw-w-[17.6%] tw-ml-8" href="#"
+          ><img src="/assets/images/logo.svg" class=""
+        /></a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div
+          class="collapse navbar-collapse tw-ml-[13%] tw-w-[67.53%] tw-mr-8 d-flex justify-content-between"
+          id="navbarSupportedContent"
+        >
+          <ul
+            class="navbar-nav mb-2 mb-lg-0 tw-text-[0.75rem] tw-w-[51.92%] d-flex justify-content-between"
+          >
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle text-white"
+                href="#"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Expertise
+              </a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">Action</a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle text-white"
+                href="#"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Insights
+              </a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item text-white" href="#">Action</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white">People</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white">About Us</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white">Careers</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white"
+                ><img
+                  src="/assets/images/navbar-search-icon.svg"
+                  class="tw-w-[1.25rem] tw-h-[1.25rem]"
+              /></a>
+            </li>
+          </ul>
+          <ul
+            class="navbar-nav mb-2 mb-lg-0 tw-text-[0.75rem] tw-w-[23.56%] d-flex justify-content-between"
+          >
+            <li class="nav-item">
+              <a class="nav-link text-white ps-0">Subscribe</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white">Contact</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white pe-0">Login</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero section - Section-one -->
+    <section
+      class="w-100 tw-h-[47.83rem] tw-bg-[url('/assets/images/hero-bg.png')] tw-bg-cover d-flex flex-column justify-content-center align-items-center position-relative"
+    >
+      <article class="lg:tw-w-[55.78%] text-white text-center">
+        <h1 class="tw-text-[1.875rem] fw-bold tw-mb-[1.875rem]">
+          Bridging the Data Gap in Policymaking: The Role of AI and Alternative
+          Data
+        </h1>
+        <p class="tw-mb-[1.875rem]">
+          Governments are far behind in the race to leverage big data. Can
+          generative AI help level the playing field?
+        </p>
+        <i>By Hugo Z - Published on 10th January 2023</i>
+      </article>
+
+      <section
+        class="position-absolute w-100 tw-bottom-[3.28rem] d-flex justify-content-center"
+      >
+        <section
+          class="position-relative tw-w-[250px] tw-group d-flex justify-content-center"
+        >
+          <p
+            class="tw-bg-[#236C8B] tw-w-[max-content] h-0 rounded-pill px-3 tw-opacity-0 tw-top-0 tw-z-10 text-white group-hover:tw-transition-all group-hover:tw-duration-500 group-hover:tw-opacity-100 group-hover:tw-top-[-3.6875rem] group-hover:tw-h-[2.4375rem] position-absolute d-flex align-items-center tw-text-[1rem]"
+          >
+            Read article
+          </p>
+          <img
+            src="/assets/images/read-more-btn.svg"
+            alt="read more button"
+            class="tw-h-[2.4375rem] tw-z-0 position-absolute"
+          />
+        </section>
+      </section>
+    </section>
+
+    <!-- Section 2 -->
+    <section
+      class="tw-h-[74.25rem] w-100 tw-bg-[url('/assets/images/bg-img-right.png'),_url('/assets/images/bg-img-left.png')] tw-bg-[position:right_0rem_top_24.3%,_left_0rem_bottom_0rem] tw-bg-[length:auto_37.32%,_auto_37.32%] tw-bg-no-repeat lg:tw-px-[22.135%]"
+    >
+      <article
+        class="w-100 tw-text-black tw-mt-[6.5625rem] d-flex flex-column tw-gap-[2.25rem]"
+      >
+        <strong class="tw-text-[1.5rem] tw-font-semibold"
+          >In the digital age, governments are no longer the only entities
+          collecting data on citizens.
+        </strong>
+
+        <p class="tw-text-[0.9375rem]">
+          More alarmingly, private companies have become more efficient than
+          administrations at gathering information. Traditional governmental
+          methods - telephone surveys, forms and in-person interviews - continue
+          to be the benchmark in accuracy, yet their inherent inefficiencies are
+          becoming more apparent. In a typical OECD country, over 3,000
+          employees work in the National Statistics Department, undertaking the
+          heavy lifting of government data collection.
+        </p>
+
+        <p class="tw-text-[0.9375rem]">
+          Costly and inefficient cycles that span years from inception to
+          completion stand in stark contrast to the real-time analytics deployed
+          by tech giants. Their platforms are capable of monitoring millions of
+          users daily, highlighting the growing need for faster and leaner
+          techniques to complement traditional data collection approaches.
+        </p>
+
+        <p class="tw-text-[1.125rem] tw-font-semibold">
+          The company behind Facebook and Instagram, Meta, has collected data on
+          77% of all internet users with about 3.9 billion people active on at
+          least one of its platforms (as of Q3 2023 Statista).
+        </p>
+      </article>
+      <article
+        class="w-100 d-flex flex-row tw-h-[22.5rem] tw-mt-[3.1875rem] tw-mb-[4.3125rem]"
+      >
+        <section
+          class="tw-rotate-[180deg] text-center tw-text-base tw-text-[#4B5768]"
+          style="writing-mode: vertical-lr"
+        >
+          Number of users in billions
+        </section>
+        <section class="tw-w-[97%] tw-h-full">
+          <canvas id="meta-users"></canvas>
+        </section>
+      </article>
+
+      <p
+        class="rounded-pill tw-py-[1.17rem] tw-px-[1.875rem] d-flex tw-w-[80%] tw-ml-[10%] tw-text-[0.9375rem] align-items-center"
+        style="background-color: rgba(35, 108, 139, 0.1)"
+      >
+        <span
+          class="tw-rounded-full tw-border-2 tw-border-solid tw-border-[#003B5C] tw-w-[26.67px] tw-h-[26.67px] text-center tw-mr-[0.75rem]"
+        >
+          i
+        </span>
+        Facebook alone had 3 bn active monthly users as of Q3 2023.
+      </p>
+    </section>
+
+    <!-- Section 3 -->
+    <section
+      class="tw-min-w-full tw-min-h-screen tw-max-h-screen position-relative"
+    >
+      <section
+        class="w-100 bg-map tw-min-h-screen tw-bg-[url('/assets/images/bg-map.png')] position-absolute tw-top-0 tw-bg-center tw-bg-no-repeat tw-z-0"
+      ></section>
+      <section
+        class="parallax-one position-absolute tw-min-h-screen w-100 tw-top-0 tw-overflow-y-scroll d-flex flex-column align-items-center justify-content-between tw-z-10"
+      >
+        <article class="position-relative tw-max-h-screen">
+          <p
+            class="first-paragraph tw-w-[55.72%] text-white position-relative tw-min-h-screen"
+          >
+            The issue is not limited to collection methodologies. National
+            statistics departments struggle to provide the granular, timely data
+            required for modern policymaking. In emerging countries, the data
+            itself is often incomplete: the informal economy, which accounts for
+            15% of the OECD's GDP, remains largely uncharted by conventional
+            methods, highlighting a gap in government data.
+          </p>
+          <p
+            class="second-paragraph tw-w-[55.72%] text-white tw-font-semibold tw-text-[1.875rem] tw-min-h-screen"
+          >
+            The Middle East mirrors this global trend of data disparities,
+            grappling with the challenge of providing updated and granular data
+            of quality.
+          </p>
+          <p class="last-paragraph tw-w-[55.72%] text-white tw-min-h-screen">
+            The availability of government data in the Middle East and North
+            Africa (MENA) region is 44% lower than the global average, and 54%
+            lower than that of the G20, signaling a significant lag in data
+            transparency and accessibility. Only about half the countries in the
+            MENA region are up to date with their health, labour force, and
+            consumption surveys (Data & Policy, 2022).
+          </p>
+        </article>
+      </section>
+    </section>
+
+    <!-- Section 4 -->
+    <section class="w-100 tw-mt-[4.6875rem] lg:tw-px-[22.135%]">
+      <article
+        class="section-four__header tw-h-[7.22rem] d-flex justify-content-center align-items-center"
+      >
+        <p
+          class="tw-text-[var(--dark-teal-500)] tw-font-semibold tw-text-[1.4rem] tw-px-[1.5rem]"
+        >
+          In the Middle East, Governments do not provide quality data...
+        </p>
+      </article>
+      <article
+        class="w-100 tw-px-[1.5rem]"
+        style="border-bottom: 0.5px solid #d0d5dd"
+      >
+        <h3 class="tw-my-[1.875rem] tw-text-[1.125rem] tw-font-semibold">
+          Open Data Barometer Global Report
+        </h3>
+        <section class="w-100 d-flex tw-h-[4.6875rem]">
+          <canvas id="g-20"></canvas>
+        </section>
+
+        <section class="w-100 d-flex tw-h-[4.6875rem]">
+          <canvas id="world-average"></canvas>
+        </section>
+
+        <section class="w-100 d-flex tw-h-[4.6875rem]">
+          <canvas id="uae"></canvas>
+        </section>
+
+        <section class="w-100 d-flex tw-h-[4.6875rem]">
+          <canvas id="mena"></canvas>
+        </section>
+      </article>
+      <article
+        class="section-four__header-two tw-h-[7.22rem] d-flex justify-content-center align-items-center tw-mt-[9rem]"
+      >
+        <p class="w-100 tw-text-[var(--dark-teal-500)] tw-font-semibold tw-text-[1.4rem] tw-px-[1.5rem] d-flex justify-content-end"
+        >
+        ...and neither do businesses...
+        </p>
+      </article>
+      <article
+        class="w-100 tw-px-[1.5rem]"
+        style="border-bottom: 0.5px solid #d0d5dd"
+      >
+        <h3 class="tw-my-[1.875rem] tw-text-[1.125rem] tw-font-semibold">
+          Business Data Transparency Index
+        </h3>
+        <article class="w-100 d-flex justify-content-between">
+        <section class="tw-w-[45.3%] d-flex tw-h-[20.625rem]">
+          <section
+          class="tw-rotate-[180deg] text-center tw-text-base tw-text-[#4B5768]"
+          style="writing-mode: vertical-lr"
+        >
+          Number of users in billions
+        </section>
+        <section class="tw-w-[97%] tw-h-full">
+          <canvas id="business-chart-one"></canvas>
+        </section>
+        </section>
+
+        <section class="tw-w-[45.3%] d-flex tw-h-[4.6875rem]">
+          <canvas id="business-chart-two"></canvas>
+        </section>
+        </article>
+      </article>
+      <p class="w-100 tw-my-[2.25rem] tw-text-[0.9375rem]">
+        At the same time, policymaking is increasingly granular (See Whiteshield's Citizen Navigator). As governments create dynamic policies that are tailored to individual citizens, the need for timely and detailed insights becomes critical. To navigate this new terrain, governments must evolve by adopting big data and AI-driven analytics.
+      </p>
+        
+      <p class="w-100 tw-text-[0.9375rem]">
+        Whiteshield's AI Economics Unit is at the forefront of integrating advanced AI capabilities into practical applications. Our latest research showcases the remarkable potential of new AI tools to support data collection for regional economic assessment.
+      </p>
+        </article>
+      </article>
+    </section>
+
+    <!-- Section 5 -->
+    <section class="lg:tw-bg-[url('/assets/images/section-5-bg.png)] tw-bg-cover tw-bg-no-repeat lg:tw-px-[22.135%]">
+      <h4 class="tw-text-[1.125rem] tw-font-semibold tw-mt-[4.6875rem]">Transforming Satellite Imagery into Economic Insights</h4>
+      <p class="tw-my-[2.25rem] tw-text-[0.9375rem]">In assessing a region's economic health, the conventional barometer has been its Gross Regional Product (GRP), similar to GDP on a more localised scale. This measure is central to policymakers' ability to formulate nuanced, region-specific strategies. But in many emerging countries, where robust data is still often scarce, Whiteshield has turned to innovative approaches, notably the use of satellite imagery, to measure regional economic performance.</p>
+
+      <p class="tw-text-[0.9375rem]">
+        To achieve this, the process involves breaking down satellite images into smaller, manageable pieces. These pieces are then analysed by artificial intelligence algorithms. Specifically, the current state-of-the-art is a type of machine learning known as Convolutional Neural Networks (CNNs). These networks require humans to first prepare extensive sets of example images, each one meticulously categorized by hand, to teach the system how to recognize various features. This process is both resource-intensive and technically challenging, particularly in developing countries with unique landscapes, such as those in the Middle East.
+      </p>
+
+      <h4 class="tw-text-[1.125rem] tw-font-semibold tw-mt-[2.25rem]">The Power of Language Models in Regional Analysis</h4>
+      <p class="tw-my-[2.25rem] tw-text-[0.9375rem]">Whiteshield is leading the way with an innovative solution in this field. The AI Economic Analysis Tool  uses Large Language AI Models, such as OpenAI's GPT-4, to analyse satellite images. This approach is gaining recognition for its potential versatility across different fields of socio-economic research, in contrast with current expert systems which are tailored for specific tasks.</p>
+
+      <article class="w-100 bg-white d-flex tw-px-[1.5rem] tw-gap-[0.9375rem]">
+        <section class="d-flex align-items-start h-100"><span class="tw-bg-[var(--dark-teal-500)] tw-w-[8px] tw-h-[1.875rem]"></span></section>
+        <section class="tw-text-[0.9375rem] tw-text-[var(--dark-teal-500)]">
+          <p>In a study examining 72 detailed satellite images of Dubai, the two different methods were compared for accuracy. The first method, a Convolutional Neural Network (CNN), was trained using images that had been pre-labelled by humans. </p>
+          <p>After several days of training, this method made errors amounting to 7.32% on average. In contrast, a newer approach using the AI Satellite Economic Analysis Tool and GPT-4, which did not rely on any pre-labelled images and took only minutes to run, achieved an error rate of 11.9%.</p>
+        </section>
+      </article>
+    </section>
+
+    </section>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/parallax.js/1.4.2/parallax.min.js"></script>
+    <script src="/assets/js/main.js"></script>
+  </body>
+</html>

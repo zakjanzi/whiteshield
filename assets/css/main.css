@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --dark-teal-500: #003b5c;
+}
+
+body {
+  font-family: Montserrat;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.parallax-one::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.parallax-one {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.parallax-one {
+  opacity: 1;
+}
+
+.transition-opacity {
+  opacity: 0.5;
+  transition: opacity 2s;
+}
+
+.bg-map {
+  background-color: rgb(0, 45, 79);
+}
+
+.section-four__header {
+  background-image: linear-gradient(
+    270deg,
+    rgba(222, 233, 238, 0) 0%,
+    rgba(222, 233, 238, 1) 100%
+  );
+  background-position: center center;
+  border-radius: 10px;
+}
+
+.section-four__header-two {
+  background-image: linear-gradient(
+    90deg,
+    rgba(222, 233, 238, 0) 0%,
+    rgba(222, 233, 238, 1) 100%
+  );
+  background-position: center center;
+  border-radius: 10px;
+}
