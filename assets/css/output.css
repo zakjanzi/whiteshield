@@ -544,8 +544,16 @@ video {
   --tw-backdrop-sepia:  ;
 }
 
+.tw-invisible {
+  visibility: hidden;
+}
+
 .tw-bottom-\[3\.28rem\] {
   bottom: 3.28rem;
+}
+
+.tw-right-0 {
+  right: 0px;
 }
 
 .tw-right-\[10\.4\%\] {
@@ -560,8 +568,20 @@ video {
   top: 0.65rem;
 }
 
+.tw-top-\[100vh\] {
+  top: 100vh;
+}
+
 .tw-top-\[20\%\] {
   top: 20%;
+}
+
+.tw-top-\[200vh\] {
+  top: 200vh;
+}
+
+.tw-top-\[20vh\] {
+  top: 20vh;
 }
 
 .tw-z-0 {
@@ -574,6 +594,14 @@ video {
 
 .tw-z-20 {
   z-index: 20;
+}
+
+.tw-z-30 {
+  z-index: 30;
+}
+
+.tw-z-\[1\] {
+  z-index: 1;
 }
 
 .tw-my-\[1\.3125rem\] {
@@ -589,6 +617,10 @@ video {
 .tw-my-\[2\.25rem\] {
   margin-top: 2.25rem;
   margin-bottom: 2.25rem;
+}
+
+.tw-mb-2 {
+  margin-bottom: 0.5rem;
 }
 
 .tw-mb-\[1\.875rem\] {
@@ -651,6 +683,10 @@ video {
   height: 1.875rem;
 }
 
+.tw-h-\[10rem\] {
+  height: 10rem;
+}
+
 .tw-h-\[2\.4375rem\] {
   height: 2.4375rem;
 }
@@ -689,6 +725,10 @@ video {
 
 .tw-max-h-\[20\.625rem\] {
   max-height: 20.625rem;
+}
+
+.tw-max-h-screen {
+  max-height: 100vh;
 }
 
 .tw-min-h-\[70vh\] {
@@ -781,6 +821,10 @@ video {
   flex-direction: column;
 }
 
+.tw-justify-center {
+  justify-content: center;
+}
+
 .tw-gap-\[0\.9375rem\] {
   gap: 0.9375rem;
 }
@@ -791,6 +835,10 @@ video {
 
 .tw-gap-\[30px\] {
   gap: 30px;
+}
+
+.tw-overflow-y-clip {
+  overflow-y: clip;
 }
 
 .tw-rounded-\[20px\] {
@@ -1080,13 +1128,77 @@ body {
 }
 
 .simplify-container {
-  background: rgba(0, 24, 53, 0);
-  transition: all 1s;
+  background: rgb(0, 24, 53);
+  opacity: 0;
 }
 
 .simplify-fade-in {
-  background: rgba(0, 24, 53, 0.75);
+  background: rgb(0, 24, 53);
+  opacity: 0.75;
+  position: fixed;
+  transition: all 2s;
 }
+
+.disable-scroll {
+  height: 100% !important;
+  overflow-y: hidden !important;
+}
+
+.fade-in {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 1s;
+}
+
+/* Table styles */
+
+.tg {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.tg td {
+  border-style: solid;
+  border-width: 0px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  overflow: hidden;
+  padding: 10px 5px;
+  word-break: normal;
+}
+
+.tg th {
+  border-style: solid;
+  border-width: 0px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-weight: normal;
+  overflow: hidden;
+  padding: 10px 5px;
+  word-break: normal;
+}
+
+.tg .tg-kw6a {
+  border-color: inherit;
+  color: #ffffff;
+  text-align: left;
+  vertical-align: top;
+}
+
+.tg .tg-207l {
+  border-color: inherit;
+  color: #ffffff;
+  font-weight: bold;
+  text-align: center;
+  vertical-align: top;
+}
+
+.tg .tg-207l:nth-child(1) {
+  text-align: right;
+}
+
+/* End table styles */
 
 .focus\:tw-shadow-none:focus {
   --tw-shadow: 0 0 #0000;
@@ -1157,12 +1269,20 @@ body {
     margin-left: 2rem;
   }
 
+  .lg\:tw-ml-\[11\%\] {
+    margin-left: 11%;
+  }
+
   .lg\:tw-ml-\[13\%\] {
     margin-left: 13%;
   }
 
   .lg\:tw-mr-8 {
     margin-right: 2rem;
+  }
+
+  .lg\:tw-mr-\[11\%\] {
+    margin-right: 11%;
   }
 
   .lg\:tw-h-24 {
@@ -1179,6 +1299,10 @@ body {
 
   .lg\:tw-w-\[17\.6\%\] {
     width: 17.6%;
+  }
+
+  .lg\:tw-w-\[460px\] {
+    width: 460px;
   }
 
   .lg\:tw-w-\[468px\] {
@@ -1201,8 +1325,16 @@ body {
     flex-direction: row !important;
   }
 
+  .lg\:tw-flex-row {
+    flex-direction: row;
+  }
+
   .lg\:tw-items-center {
     align-items: center;
+  }
+
+  .lg\:tw-justify-between {
+    justify-content: space-between;
   }
 
   .lg\:tw-bg-\[url\(\'\/assets\/images\/hero-bg\.png\'\)\] {
@@ -1224,10 +1356,6 @@ body {
   .lg\:tw-px-\[22\.135\%\] {
     padding-left: 22.135%;
     padding-right: 22.135%;
-  }
-
-  .lg\:tw-pt-\[100vh\] {
-    padding-top: 100vh;
   }
 
   .lg\:tw-text-\[1\.125rem\] {
