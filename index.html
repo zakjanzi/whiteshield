@@ -32,11 +32,11 @@ https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js
 "></script>
     <title>WhiteShield</title>
   </head>
-  <body class="w-100">
-    <nav class="navbar navbar-expand-lg">
+  <body class="w-100 d-flex flex-column align-items-center">
+    <nav class="navbar navbar-expand-lg w-100">
       <div class="container-fluid px-0 w-100">
         <a class="navbar-brand" href="#"
-          ><img src="/assets/images/logo.svg" class=""
+          ><img src="/assets/images/logo.svg" class="logo" alt="logo"
         /></a>
         <button
           class="navbar-toggler"
@@ -101,7 +101,7 @@ https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js
               /></a>
             </li>
           </ul>
-          <ul class="navbar-nav-2 mb-2 mb-lg-0 d-lg-flex justify-content-between" style="list-style: none;">
+          <ul class="navbar-nav-2 mb-2 mb-lg-0 d-lg-flex justify-content-between align-items-center" style="list-style: none;">
             <li class="nav-item">
               <a class="nav-link text-white ps-0">Subscribe</a>
             </li>
@@ -155,7 +155,7 @@ https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js
     </section>
 
     <!-- Section 2 -->
-    <section class="first-section w-100">
+    <section class="first-section w-100 row justify-content-center">
       <article class="first-section__wrapper w-100 d-flex flex-column">
         <strong class="first-section__text-1"
           >In the digital age, governments are no longer the only entities
@@ -193,13 +193,13 @@ https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js
         >
           Number of users in billions
         </section>
-        <section class="first-section__chart-container h-100">
+        <section class="first-section__chart-container">
           <canvas id="meta-users"></canvas>
         </section>
       </article>
 
       <p
-        class="first-section__fig-caption rounded-pill d-flex align-items-center"
+        class="first-section__fig-caption rounded-pill d-flex align-items-center justify-content-center"
         style="background-color: rgba(35, 108, 139, 0.1)"
       >
         <span class="first-section__fig-caption-icon text-center"> i </span>
@@ -269,36 +269,38 @@ https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js
         <h3 class="section-four__charts-header">
           Open Data Barometer Global Report
         </h3>
+        <section class="section-four__all-charts-wrapper d-flex flex-column justify-content-center">
         <section
-          class="section-four__chart-container w-100 d-flex align-items-center"
+          class="section-four__chart-container d-flex align-items-center"
         >
           <span class="section-four__chart-title">G-20 average</span
-          ><canvas id="g-20"></canvas><span>56.8</span>
+          ><article class="section-four__chart-canvas-wrapper d-flex justify-content-start align-items-center position-relative"><canvas id="g-20" class="position-relative"></canvas><span class="section-four__chart-canvas-overlay position-absolute bg-white text-start d-flex align-items-center ">56.8</span></article>
         </section>
 
         <section
-          class="section-four__chart-container w-100 d-flex align-items-center"
+          class="section-four__chart-container d-flex align-items-center"
         >
           <span class="section-four__chart-title">World Average</span
-          ><canvas id="world-average"></canvas><span>32.5</span>
+          ><article class="section-four__chart-canvas-wrapper d-flex justify-content-start align-items-center position-relative"><canvas id="world-average"  class="position-relative"></canvas><span class="section-four__chart-canvas-overlay position-absolute bg-white text-start d-flex align-items-center ">32.5</span></article>
         </section>
 
         <section
-          class="section-four__chart-container w-100 d-flex align-items-center"
+          class="section-four__chart-container d-flex align-items-center"
         >
           <span class="section-four__chart-title bold-titles">UAE</span
-          ><canvas id="uae"></canvas><span>26.2</span>
+          ><article class="section-four__chart-canvas-wrapper d-flex justify-content-start align-items-center position-relative"><canvas id="uae"  class="position-relative"></canvas><span class="section-four__chart-canvas-overlay position-absolute bg-white text-start d-flex align-items-center ">26.2</span></article>
         </section>
 
         <section
-          class="section-four__chart-container w-100 d-flex align-items-center"
+          class="section-four__chart-container w-auto d-flex align-items-center"
         >
           <span class="section-four__chart-title bold-titles">MENA</span
-          ><canvas id="mena"></canvas><span>18.2</span>
+          ><article class="section-four__chart-canvas-wrapper d-flex justify-content-start align-items-center position-relative"><canvas id="mena"  class="position-relative"></canvas><span class="section-four__chart-canvas-overlay position-absolute bg-white text-start d-flex align-items-center">18.2</span></article>
         </section>
+      </section>
 
         <!-- Shown on tablets -->
-        <section class="w-100 d-lg-none">
+        <section class="data-availability-text w-100 d-flex flex-column align-items-center">
           <p>> Data availability score of UAE is <span class="text-light-red">54%</span> lower than world average</p>
           <p>> Data availability score of MENA is <span class="text-light-red">44%</span> lower than world average</p>
         </section>
@@ -336,24 +338,21 @@ https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js
             class="section-four__business-chart-two-container position-relative h-100"
           >
             <div class="section-four__business-chart-two-ticks-cover position-absolute left-0 h-100 bg-white" style="width:30px;"></div>
-            <canvas id="business-chart-two"></canvas>
-          </section>
-          </section>
-
-          
-
-          <!-- Container for rank counter -->
+            <!-- Container for rank counter -->
           <section
-            class="section-four__rank-counter w-100 tw-top-[0.65rem] position-absolute d-flex h-100 d-flex justify-content-end"
+          class="section-four__rank-counter w-100 position-absolute d-flex h-100 justify-content-center pt-5"
+        >
+          <article
+            class="section-four__rank-counter-wrapper d-flex flex-column justify-content-center align-items-center position-relative"
           >
-            <article
-              class="section-four__rank-counter-wrapper d-flex flex-column justify-content-center align-items-center position-relative"
-            >
-              <section class="section-four__rank-counter-text">
-                #<span class="country-rank-counter">0</span>
-              </section>
-              <section>UAE Rank</section>
-            </article>
+            <section class="section-four__rank-counter-text">
+              #<span class="country-rank-counter">0</span>
+            </section>
+            <section>UAE Rank</section>
+          </article>
+        </section>
+            <canvas id="business-chart-two" class="position-relative"></canvas>
+          </section>
           </section>
         </article>
       </article>
@@ -457,7 +456,7 @@ https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js
         </section>
       </article>
 
-      <article class="w-100" style="border-bottom: 0.5px solid #d0d5dd">
+      <article class="dubai-dataset-container w-100" style="border-bottom: 0.5px solid #d0d5dd">
         <h3 class="section-five__chart-header">
           Dubai dataset experiment - Model performance by category
         </h3>
@@ -469,7 +468,7 @@ https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js
             >
               Average Error
             </section>
-            <section class="section-five__main-chart-wrapper tw-w-[97%] h-100">
+            <section class="section-five__main-chart-wrapper h-100 d-flex justify-content-center">
               <canvas id="dubai-dataset-chart"></canvas>
             </section>
           </section>
@@ -479,11 +478,11 @@ https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js
           class="section-five__label-descriptors d-flex justify-content-center"
         >
           <p class="d-flex align-items-center">
-            <i class="me-2"></i>
+            <i class="me-1"></i>
             <span>Current method (CNN)</span>
           </p>
           <p class="d-flex align-items-center">
-            <i class="me-2"></i>
+            <i class="me-1"></i>
             <span>WhiteShield approach (LLM)</span>
           </p>
         </section>
@@ -492,159 +491,7 @@ https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js
 
     <!-- Section 6 -->
     <article class="last-section-container h-100 position-relative">
-      <article class="first-overlay-container row w-100 position-relative flex">
-        <!-- This section is displayed for mobile view only -->
-      <section class="col-12 hide-scrollbar d-md-none d-flex flex-column bg-map" style="overflow-y: scroll; gap:3rem; height: 100vh; padding: 1rem !important; text-align: center !important;">
-        <!-- Simplifying text -->
-        <section class="text-white position-relative">
-          <h2 class="text-white">Simplifying Complexity</h2>
-          <p>
-            What are the implications for governments and policymakers?
-            Whiteshield's AI Economic Analysis Tool simplifies the intricate
-            economic analysis process. Our remote sensing capabilities offer
-            an efficient means of generating high-level analysis on specific
-            economic measures in a matter of days only.
-          </p>
-        </section>
-        <!-- End simplifying text -->
-
-        <!-- Satellite images -->
-        <section
-          class="d-flex flex-column justify-content-center position-relative"
-        >
-          <h2 class="text-white">
-            High-definition satellite images are broken into smaller tiles
-          </h2>
-          <article>
-            <img
-              src="/assets/images/satellite-image-1.png"
-              alt="satellite image 1"
-              class=""
-            />
-          </article>
-          <br />
-          <article>
-            <img
-              src="/assets/images/satellite-image-2.png"
-              alt="satellite image 1"
-              class=""
-            />
-          </article>
-        </section>
-        <!-- End satellite images -->
-
-        <!-- Paragraph two -->
-        <section class="text-white position-relative">
-          <p>
-            In the example shown, Whiteshield was asked to quickly respond to
-            an agriculture intensity assessment task, which would have
-            required the development of a model especially trained for
-            desertic crops with the traditional method . With the AI Economic
-            Analysis Tool, the dataset was loaded and a scoring formula was
-            defined with relevant stakeholders, allowing to deliver a precise
-            sectoral estimate for an area of 4000 km2 in 48h.
-          </p>
-        </section>
-        <!-- End Paragraph two -->
-
-        <!-- Data table -->
-        <section
-          class="flex-column justify-content-center position-relative"
-        >
-          <h2 class="text-white">
-            The AI model segments hat it sees on each tile
-          </h2>
-          <table class="tg">
-            <thead>
-              <tr>
-                <th class="tg-207l">Index</th>
-                <th class="tg-207l">1</th>
-                <th class="tg-207l">2</th>
-                <th class="tg-207l">3</th>
-                <th class="tg-207l">4</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="tg-207l">Longitude</td>
-                <td class="tg-kw6a">53.75</td>
-                <td class="tg-kw6a">53.76</td>
-                <td class="tg-kw6a">53.77</td>
-                <td class="tg-kw6a">53.78</td>
-              </tr>
-              <tr>
-                <td class="tg-207l">Latitude</td>
-                <td class="tg-kw6a">23.38</td>
-                <td class="tg-kw6a">23.38</td>
-                <td class="tg-kw6a">23.38</td>
-                <td class="tg-kw6a">23.38</td>
-              </tr>
-              <tr>
-                <td class="tg-207l">Crops</td>
-                <td class="tg-kw6a">0.8</td>
-                <td class="tg-kw6a">0.2</td>
-                <td class="tg-kw6a">0.4</td>
-                <td class="tg-kw6a">0.2</td>
-              </tr>
-              <tr>
-                <td class="tg-207l">Cattle</td>
-                <td class="tg-kw6a">0</td>
-                <td class="tg-kw6a">0.4</td>
-                <td class="tg-kw6a">0</td>
-                <td class="tg-kw6a">0.6</td>
-              </tr>
-              <tr>
-                <td class="tg-207l">Greenhouse</td>
-                <td class="tg-kw6a">0.4</td>
-                <td class="tg-kw6a">0.1</td>
-                <td class="tg-kw6a">0.7</td>
-                <td class="tg-kw6a">0.2</td>
-              </tr>
-            </tbody>
-          </table>
-        </section>
-        <!-- End Data Table -->
-
-        <!-- Scoring Formula -->
-        <section
-          class="d-flex flex-column justify-content-center position-relative"
-        >
-        <h4 class="text-white">The scoring formula is defined with weights</h4>
-        <section class="scoring-formula">
-          <p>Agriculture intensity =</p>
-          <p>w1 (40%) x Crops Score</p>
-          <p>+ w2 (40%) x Built-up Area Score</p>
-          <p>+ w3 (20%) x Greenhouse Presence</p>
-        </section>
-      </section>
-      <!-- End scoring formula -->
-
-      <!-- Paragraph three -->
-      <section class="text-white position-relative">
-        <p>
-          Continued research suggests an optimistic future where AI,
-          especially LLMs like GPT-4, will transform the way policies are
-          developed. Alternative sources will supplement, and perhaps
-          replace the current survey-based approach.
-        </p>
-        <br />
-        <p>
-          Whiteshield is providing a concrete example of the tools to come:
-          the AI Economics Unit is currently developing new capabilities for
-          the AI Economic Analysis Tool - such as cell tower activation,
-          night light intensity, real estate prices, etc. - to provide
-          policymakers with near real-time analysis specific to their sector
-          and at an unprecedented level of detail.
-        </p>
-        <br />
-        <p>
-          For more information about our AI solutions, please contact us at
-          Whiteshield.
-        </p>
-      </section>
-      <!-- End Paragraph three -->
-      </section>
-
+      <article class="first-overlay-container row w-100 position-relative d-none d-md-flex">        
         <!-- Left container -->
         <section class="left-container col-12 hide-scrollbar d-none d-md-block">
           <!-- Simplifying text -->
@@ -715,7 +562,7 @@ https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js
         <!-- End left container -->
 
         <!-- Right container -->
-        <section class="right-container col-6 h-100 position-absolute d-none d-md-block">
+        <section class="right-container col-6 h-100 position-absolute d-none d-md-flex">
           <!-- Satellite images -->
           <section
             class="satellite-images d-flex flex-column justify-content-center position-absolute"
@@ -815,6 +662,160 @@ https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js
         <!-- End right container -->
       </article>
       
+      <!-- This section is displayed for mobile view only -->
+      <img src="/assets/images/last-section-bg-2-mobile.png" class="footer-bg-two-mobile position-absolute w-100 h-100" />
+      <article class="first-overlay-container row position-relative d-block d-md-none" style="width: 102vw !important;">
+      <section class="left-container col-12 hide-scrollbar d-md-none d-flex flex-column" style="overflow-y: scroll; height: 100vh; padding: 1rem !important; text-align: start !important; margin: 3.8%; width: 100vw;">
+        <!-- Simplifying text -->
+        <section class="simplify-text text-white position-relative">
+          <h2 class="text-white">Simplifying Complexity</h2>
+          <p>
+            What are the implications for governments and policymakers?
+            Whiteshield's AI Economic Analysis Tool simplifies the intricate
+            economic analysis process. Our remote sensing capabilities offer
+            an efficient means of generating high-level analysis on specific
+            economic measures in a matter of days only.
+          </p>
+
+          <p>
+            In the example shown, Whiteshield was asked to quickly respond to
+            an agriculture intensity assessment task, which would have
+            required the development of a model especially trained for
+            desertic crops with the traditional method . With the AI Economic
+            Analysis Tool, the dataset was loaded and a scoring formula was
+            defined with relevant stakeholders, allowing to deliver a precise
+            sectoral estimate for an area of 4000 km2 in 48h.
+          </p>
+
+          <!-- Satellite images -->
+        <section
+        class="d-flex flex-column justify-content-center align-items-center position-relative my-5"
+        style="width: 100%; height: 120vh;"
+      >
+        <h2 class="text-white">
+          High-definition satellite images are broken into smaller tiles
+        </h2>
+        <article>
+          <img
+            src="/assets/images/satellite-image-1.png"
+            alt="satellite image 1"
+            class="w-100"
+          />
+        </article>
+        <br />
+        <article>
+          <img
+            src="/assets/images/satellite-image-2.png"
+            alt="satellite image 1"
+            class="w-100"
+          />
+        </article>
+      </section>
+      <!-- End satellite images -->
+
+      <!-- Data table -->
+      <section
+      class="data-table-mobile d-flex flex-column justify-content-center align-items-center position-relative"
+    >
+      <h2 class="text-white">
+        The AI model segments hat it sees on each tile
+      </h2>
+      <table class="tg w-100">
+        <thead>
+          <tr>
+            <th class="tg-207l">Index</th>
+            <th class="tg-207l">1</th>
+            <th class="tg-207l">2</th>
+            <th class="tg-207l">3</th>
+            <th class="tg-207l">4</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tg-207l">Longitude</td>
+            <td class="tg-kw6a">53.75</td>
+            <td class="tg-kw6a">53.76</td>
+            <td class="tg-kw6a">53.77</td>
+            <td class="tg-kw6a">53.78</td>
+          </tr>
+          <tr>
+            <td class="tg-207l">Latitude</td>
+            <td class="tg-kw6a">23.38</td>
+            <td class="tg-kw6a">23.38</td>
+            <td class="tg-kw6a">23.38</td>
+            <td class="tg-kw6a">23.38</td>
+          </tr>
+          <tr>
+            <td class="tg-207l">Crops</td>
+            <td class="tg-kw6a">0.8</td>
+            <td class="tg-kw6a">0.2</td>
+            <td class="tg-kw6a">0.4</td>
+            <td class="tg-kw6a">0.2</td>
+          </tr>
+          <tr>
+            <td class="tg-207l">Cattle</td>
+            <td class="tg-kw6a">0</td>
+            <td class="tg-kw6a">0.4</td>
+            <td class="tg-kw6a">0</td>
+            <td class="tg-kw6a">0.6</td>
+          </tr>
+          <tr>
+            <td class="tg-207l">Greenhouse</td>
+            <td class="tg-kw6a">0.4</td>
+            <td class="tg-kw6a">0.1</td>
+            <td class="tg-kw6a">0.7</td>
+            <td class="tg-kw6a">0.2</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <!-- End Data Table -->
+
+    <!-- Scoring Formula -->
+    <section
+    class="scoring-formula-container d-flex flex-column justify-content-center position-relative"
+  >
+  <h4 class="text-white">The scoring formula is defined with weights</h4>
+  <section class="scoring-formula w-100">
+    <p>Agriculture intensity =</p>
+    <p>w1 (40%) x Crops Score</p>
+    <p>+ w2 (40%) x Built-up Area Score</p>
+    <p>+ w3 (20%) x Greenhouse Presence</p>
+  </section>
+</section> 
+<!-- End scoring formula -->
+
+<!-- Paragraph three -->
+      <section class="paragraph-three-mobile text-white position-relative">
+        <p>
+          Continued research suggests an optimistic future where AI,
+          especially LLMs like GPT-4, will transform the way policies are
+          developed. Alternative sources will supplement, and perhaps
+          replace the current survey-based approach.
+        </p>
+        <br />
+        <p>
+          Whiteshield is providing a concrete example of the tools to come:
+          the AI Economics Unit is currently developing new capabilities for
+          the AI Economic Analysis Tool - such as cell tower activation,
+          night light intensity, real estate prices, etc. - to provide
+          policymakers with near real-time analysis specific to their sector
+          and at an unprecedented level of detail.
+        </p>
+        <br />
+        <p>
+          For more information about our AI solutions, please contact us at
+          Whiteshield.
+        </p>
+      </section>
+      <!-- End Paragraph three -->
+      </section>
+      <!-- End simplifying text -->
+
+      
+      </section>
+      <!-- End for mobile view -->
+      </article>
     </article>
     <!-- End section 6 -->
 

@@ -27,6 +27,18 @@
     });
     // End read more button click
 
+    const isDesktopView = () => {
+      return window.innerWidth > 1024;
+    };
+
+    const isTabletView = () => {
+      return window.innerWidth >= 768 && window.innerWidth < 1024;
+    };
+
+    const isMobileView = () => {
+      return window.innerWidth < 768;
+    };
+
     function isScrolledIntoView(el) {
       var rect = el.getBoundingClientRect();
       var elemTop = rect.top;
@@ -38,6 +50,26 @@
       //isVisible = elemTop < window.innerHeight && elemBottom >= 0;
       return isVisible;
     }
+
+    // rem to px converter setup
+    let remValue = 10;
+
+    if (window.innerWidth > 800) {
+      remValue = 11;
+    }
+
+    if (window.innerWidth > 1100) {
+      remValue = 14;
+    }
+
+    if (window.innerWidth >= 1400) {
+      remValue = 16;
+    }
+
+    const remToPixel = (givenRemValue) => {
+      return givenRemValue * remValue;
+    };
+    // End rem to px converter setup
 
     // Line chart setup
     const drawLineChart = () => {
@@ -51,14 +83,16 @@
         { num_users: 3.96, quarter: "Q3 '23" },
       ];
 
-      const totalDuration = 1400;
+      const totalDuration = 300;
       const delayBetweenPoints = totalDuration / data.length;
-      const previousY = (ctx) =>
-        ctx.index === 0
-          ? ctx.chart.scales.y.getPixelForValue(100)
-          : ctx.chart
-              .getDatasetMeta(ctx.datasetIndex)
-              .data[ctx.index - 1].getProps(["y"], true).y;
+      const previousY = (ctx) => {
+        const value =
+          ctx.index === 0
+            ? ctx.chart.scales.y.getPixelForValue(100)
+            : ctx.chart
+                .getDatasetMeta(ctx.datasetIndex)
+                .data[ctx.index - 1].getProps(["y"], true).y;
+      };
 
       const animation = {
         x: {
@@ -89,14 +123,53 @@
         },
       };
 
+      const rect = { x: 0, y: 0 };
+
       new Chart(document.getElementById("meta-users"), {
         type: "line",
         options: {
           responsive: true,
+          maintainAspectRatio: false,
           plugins: {
             legend: {
               display: false,
             },
+          },
+          onHover: (e, _, chart) => {
+            const {
+              ctx,
+              tooltip,
+              chartArea: { top, bottom, left, right, width, height },
+              scales: { x, y },
+            } = e.chart;
+
+            const canvasPositionX = Chart.helpers.getRelativePosition(
+              e,
+              chart
+            ).x;
+
+            const tooltipsPositions =
+              tooltip.chart.scales.x._gridLineItems.filter((tooltip, index) => {
+                return index > 0 && Math.round(tooltip.tx1) === canvasPositionX;
+              });
+
+            if (tooltipsPositions.length > 0) {
+              rect.x = canvasPositionX;
+              rect.y = tooltipsPositions[0].ty1 - 600;
+              ctx.save();
+              ctx.beginPath();
+              ctx.lineWidth = 0.5;
+              ctx.strokeStyle = "rgba(0,0,0,1)";
+              ctx.setLineDash([10, 10]);
+              ctx.moveTo(canvasPositionX, rect.y);
+              ctx.lineTo(canvasPositionX, bottom);
+              ctx.stroke();
+              ctx.closePath();
+              ctx.setLineDash([]);
+            } else {
+              ctx.restore();
+              ctx.save();
+            }
           },
           scales: {
             x: {
@@ -144,13 +217,13 @@
                 return gradient;
               },
               fill: true,
-              pointBackgroundColor: "grey",
-              pointBorderColor: "#fff",
-              pointBorderWidth: 1,
-              pointRadius: 4,
+              pointBackgroundColor: "none",
+              pointBorderColor: "transparent",
+              pointBorderWidth: 0,
+              pointRadius: 0,
               pointHoverBackgroundColor: "#fff",
-              pointHoverBorderColor: "grey",
-              pointHoverBorderWidth: 1,
+              pointHoverBorderColor: "transparent",
+              pointHoverBorderWidth: 0,
             },
           ],
         },
@@ -170,15 +243,24 @@
     const secondParagraph = document.querySelector(".second-paragraph");
     // End first parallax section
 
+    let firstOverlayContainer;
+
+    if (!isDesktopView()) {
+      document.querySelector(".first-overlay-container").remove();
+      firstOverlayContainer = document.querySelector(
+        ".first-overlay-container"
+      );
+    } else {
+      firstOverlayContainer = document.querySelector(
+        ".first-overlay-container"
+      );
+    }
+
     // Last section page parallax
     const lastSectionContainer = document.querySelector(
       ".last-section-container"
     );
-    const lastSectionContainerPos =
-      lastSectionContainer.getBoundingClientRect().y;
-    const firstOverlayContainer = document.querySelector(
-      ".first-overlay-container"
-    );
+
     const rightContainer = document.querySelector(".right-container");
     const leftContainer = document.querySelector(".left-container");
     const simplifyText = document.querySelector(".simplify-text");
@@ -188,6 +270,10 @@
     const dataTable = document.querySelector(".data-table");
     const scoringFormula = document.querySelector(".scoring-formula-container");
     const paragraphThree = document.querySelector(".paragraph-three");
+    const footerBgTwoMobile = document.querySelector(".footer-bg-two-mobile");
+    const paragraphThreeMobile = document.querySelector(
+      ".paragraph-three-mobile"
+    );
     let lastSectionParallaxActive = false;
     let lastSectionListener;
     let viewedSections = [];
@@ -208,12 +294,14 @@
     };
 
     const removeViewedSection = (section) => {
+      viewedSections = Array.from(new Set(viewedSections));
+
       const sectionIndex = viewedSections.indexOf(section);
       viewedSections.splice(sectionIndex, 1);
     };
 
     const showOrHideSatelliteImages = () => {
-      if (simplifyText.getBoundingClientRect().y < 50) {
+      if (simplifyText.getBoundingClientRect().y <= 0) {
         if (sectionViewed(SECTIONS.SATELLITE_IMAGES)) return;
         satelliteImages.classList.add("fade-in");
 
@@ -225,6 +313,7 @@
         removeViewedSection(SECTIONS.SATELLITE_IMAGES);
 
         dataTable.classList.remove("fade-in");
+        // satelliteImages.classList.remove("fade-in");
 
         // Change the background image of the last section container
         lastSectionContainer.classList.remove("bg-img-2");
@@ -232,24 +321,34 @@
     };
 
     const showOrHideDataTable = () => {
-      // Display data table
-      if (paragraphTwo.getBoundingClientRect().y <= -200) {
-        // Hide all the right container items
-        satelliteImages.classList.remove("fade-in");
+      if (
+        paragraphThree.getBoundingClientRect().y <= window.innerHeight - 150 &&
+        displayedPThree.state
+      ) {
+        firstOverlayContainer.classList.add("simplify-fade-in");
+      }
+
+      if (
+        paragraphThree.getBoundingClientRect().y <= window.innerHeight &&
+        !displayedPThree.state
+      ) {
+        displayedPThree.state = true;
+
         scoringFormula.classList.remove("fade-in");
-        dataTable.classList.remove("fade-in");
 
-        // Hide overlay
-        firstOverlayContainer.classList.remove("simplify-fade-in");
-
-        // Change the background image of the last section container
+        // // Change the background image of the last section container
+        lastSectionContainer.classList.remove("bg-img-1");
         lastSectionContainer.classList.add("bg-img-2");
+        firstOverlayContainer.classList.remove("simplify-fade-in");
+        lastSectionContainer.classList.add("show-bg-img-2");
+      }
 
-        // Reset viewed images in right container for them to be displayed on reverse scroll
-        removeViewedSection(SECTIONS.DATA_TABLE);
-        removeViewedSection(SECTIONS.SCORING_FORMULA);
-        removeViewedSection(SECTIONS.SATELLITE_IMAGES);
-      } else if (paragraphTwo.getBoundingClientRect().y < 50) {
+      if (
+        paragraphTwo.getBoundingClientRect().y + 5 <=
+        Math.abs(
+          window.innerHeight - (window.innerHeight + paragraphTwo.offsetHeight)
+        )
+      ) {
         if (sectionViewed(SECTIONS.SCORING_FORMULA)) return;
         scoringFormula.classList.add("fade-in");
 
@@ -258,8 +357,12 @@
         dataTable.classList.remove("fade-in");
 
         viewedSections.push(SECTIONS.SCORING_FORMULA);
-        removeViewedSection(SECTIONS.DATA_TABLE);
-      } else if (paragraphTwo.getBoundingClientRect().y < 600) {
+      }
+
+      if (
+        paragraphTwo.getBoundingClientRect().y + paragraphTwo.offsetHeight <
+        window.innerHeight
+      ) {
         if (sectionViewed(SECTIONS.DATA_TABLE)) return;
         dataTable.classList.add("fade-in");
 
@@ -271,26 +374,17 @@
       }
     };
 
-    let displayedPThree = false;
-    const showOrHideOverlayForLastParagraph = () => {
-      if (
-        paragraphThree.getBoundingClientRect().y <= 600 &&
-        displayedPThree === false
-      ) {
-        displayedPThree = true;
-        firstOverlayContainer.classList.add("fade-in-important");
-      } else if (paragraphThree.getBoundingClientRect().y > 600) {
-        displayedPThree = false;
-        firstOverlayContainer.classList.remove("fade-in-important");
-
-        // Change the background image of the last section container
-        lastSectionContainer.classList.remove("bg-img-2");
-      }
+    let displayedPThree = {
+      state: false,
     };
 
     const setupScrollListenerForLastSection = () => {
       const handler = (e) => {
-        if (simplifyText.getBoundingClientRect().y < 450) {
+        if (
+          simplifyText.getBoundingClientRect().y <
+            window.innerHeight - simplifyText.offsetHeight &&
+          simplifyText.getBoundingClientRect().y > 0
+        ) {
           firstOverlayContainer.classList.add("simplify-fade-in");
         } else if (
           Math.round(simplifyText.getBoundingClientRect().y) ===
@@ -308,8 +402,6 @@
         showOrHideSatelliteImages();
 
         showOrHideDataTable();
-
-        showOrHideOverlayForLastParagraph();
       };
 
       lastSectionListener = leftContainer.addEventListener("scroll", handler);
@@ -319,6 +411,7 @@
       if (endOfPageReached() && !lastSectionParallaxActive) {
         lastSectionParallaxActive = true;
 
+        leftContainer.style.overflowY = "scroll";
         leftContainer.style.overscrollBehavior = "contain";
 
         setupScrollListenerForLastSection();
@@ -351,24 +444,24 @@
         isScrolledIntoView(document.querySelector("#meta-users")) &&
         !hasBeenDrawn(CHARTS.FIRST_CHART)
       ) {
-        drawLineChart();
         pushIntoDrawnCharts(CHARTS.FIRST_CHART);
+        drawLineChart();
       }
 
       if (
         isScrolledIntoView(document.querySelector("#mena")) &&
         !hasBeenDrawn(CHARTS.HORIZONTAL_BAR)
       ) {
-        drawHorizontalBarChart();
         pushIntoDrawnCharts(CHARTS.HORIZONTAL_BAR);
+        drawHorizontalBarChart();
       }
 
       if (
         isScrolledIntoView(document.querySelector("#business-chart-one")) &&
         !hasBeenDrawn(CHARTS.BUSINESS_CHART_ONE)
       ) {
-        drawBusinessBarChartOne();
         pushIntoDrawnCharts(CHARTS.BUSINESS_CHART_ONE);
+        drawBusinessBarChartOne();
       }
 
       if (
@@ -388,8 +481,8 @@
         isScrolledIntoView(document.querySelector("#dubai-dataset-chart")) &&
         !hasBeenDrawn(CHARTS.DUBAI_DATASET_CHART)
       ) {
-        drawDubaiDatasetChart();
         pushIntoDrawnCharts(CHARTS.DUBAI_DATASET_CHART);
+        drawDubaiDatasetChart();
       }
     };
     // End chart display operations
@@ -401,8 +494,86 @@
     window.addEventListener("scroll", (e) => {
       showAnimatedChart();
 
+      // handle mobile view on scroll
+      if (!isDesktopView() && endOfPageReached()) {
+        const handler = (e) => {
+          let firstOverlayActive = false;
+
+          if (
+            simplifyText.getBoundingClientRect().y <
+              window.innerHeight - window.innerHeight / 2 &&
+            simplifyText.getBoundingClientRect().y > 10
+          ) {
+            if (!firstOverlayActive) {
+              firstOverlayContainer.classList.add("simplify-fade-in");
+              firstOverlayActive = true;
+            }
+
+            lastSectionParallaxActive = true;
+
+            leftContainer.style.overflowY = "scroll";
+            leftContainer.style.overscrollBehavior = "contain";
+          }
+          let overlayDisabled = false;
+          if (
+            Math.round(simplifyText.getBoundingClientRect().y) >
+              window.innerHeight / 2 &&
+            !overlayDisabled
+          ) {
+            firstOverlayContainer.classList.remove("simplify-fade-in");
+
+            lastSectionParallaxActive = false;
+
+            leftContainer.style.overscrollBehavior = "initial";
+
+            leftContainer.removeEventListener("scroll", lastSectionListener);
+            overlayDisabled = true;
+          }
+
+          if (
+            scoringFormula.getBoundingClientRect().y <=
+              -(window.innerHeight - scoringFormula.offsetHeight) &&
+            paragraphThreeMobile.getBoundingClientRect().y > window.innerHeight
+          ) {
+            // handle the background fade in after scoring formula section
+
+            // Fade out left container (This is the container for all elements being scrolled in the footer)
+            leftContainer.classList.add("fade-out-animation");
+
+            // Fade in new background
+            footerBgTwoMobile.classList.add("fade-in-animation");
+
+            // Fade out overlay
+            firstOverlayContainer.classList.remove("simplify-fade-in");
+          }
+
+          if (
+            scoringFormula.getBoundingClientRect().y >=
+              -(window.innerHeight - scoringFormula.offsetHeight) &&
+            !overlayDisabled
+          ) {
+            leftContainer.classList.remove("fade-out-animation");
+
+            footerBgTwoMobile.classList.remove("fade-in-animation");
+
+            firstOverlayContainer.classList.add("simplify-fade-in");
+          }
+
+          if (
+            paragraphThreeMobile.getBoundingClientRect().y <
+            window.innerHeight - window.innerHeight * 0.6
+          ) {
+            firstOverlayContainer.classList.add("simplify-fade-in");
+
+            // firstOverlayContainer.classList.add("fade-in-important");
+          }
+        };
+
+        lastSectionListener = leftContainer.addEventListener("scroll", handler);
+      }
+
       // For last section of the page
-      if (!lastSectionParallaxActive) {
+      if (!lastSectionParallaxActive && isDesktopView()) {
         handleLastSectionParallax();
       }
       // End for last section of the page
@@ -418,7 +589,7 @@
       }
 
       // For Background transition opacity (map section)
-      if (window.scrollY + 50 >= sectionThreeBgPos) {
+      if (window.scrollY + window.innerHeight / 2 >= sectionThreeBgPos) {
         if (sectionThreeBg.classList.contains("bg-map")) return;
 
         sectionThreeBg.classList.add("bg-map");
@@ -426,63 +597,126 @@
       // End for background transition opacity
     });
 
+    const getCanvasHeight = () => {
+      if (window.innerWidth > 767) {
+        return "60px";
+      } else if (window.innerWidth <= 767) {
+        return "32px";
+      }
+    };
+
+    const getCanvasWidth = () => {
+      if (window.innerWidth > 767) {
+        return 65;
+      } else if (window.innerWidth <= 767) {
+        return 70;
+      }
+    };
+
     // Open Data Barometer charts setup
     const drawHorizontalBarChart = () => {
+      const animateValuePosition = (overlay, widthValue) => {
+        let pixelsDeducted = 0;
+
+        const barSizeLabelPosition = (+widthValue / 60) * 100 + 3 + "%";
+
+        const interval = setInterval(() => {
+          if (pixelsDeducted >= +barSizeLabelPosition.split("%")[0]) {
+            overlay.style.left = pixelsDeducted - 4 + "%";
+
+            clearInterval(interval);
+          } else {
+            overlay.style.left = pixelsDeducted + "%";
+
+            pixelsDeducted += 5;
+          }
+        });
+      };
+
+      const slideOverlaysRight = () => {
+        // Get the reference to the overlay
+        const barOverlays = document.querySelectorAll(
+          ".section-four__chart-canvas-overlay"
+        );
+
+        barOverlays.forEach((overlay, index) => {
+          animateValuePosition(overlay, overlay.textContent, index);
+        });
+      };
+
+      const setChartHeightAndWidth = (chart) => {
+        chart.canvas.parentNode.style.height = getCanvasHeight();
+        chart.canvas.parentNode.style.width = getCanvasWidth() + "%";
+      };
+
       [
         { id: "g-20", length: 56.8, bgColor: "#236C8B" },
         { id: "world-average", length: 32.5, bgColor: "#236C8B" },
-        { id: "uae", length: 26.2, bgColor: "#DC766C" },
-        { id: "mena", length: 18.2, bgColor: "#DC766C" },
-      ].forEach((horizontalBarChart) => {
-        new Chart(document.getElementById(horizontalBarChart.id), {
-          type: "bar",
-          options: {
-            indexAxis: "y",
-            responsive: true,
-            aspectRatio: window.innerWidth < 768 ? 2 : 5,
-            plugins: {
-              legend: {
-                display: false,
+        { id: "uae", length: 26.2, bgColor: "#E39189" },
+        { id: "mena", length: 18.2, bgColor: "#E39189" },
+      ].forEach((horizontalBarChart, index) => {
+        const chart = new Chart(
+          document.getElementById(horizontalBarChart.id),
+          {
+            type: "bar",
+            options: {
+              indexAxis: "y",
+              responsive: true,
+              maintainAspectRatio: false,
+              animation: {
+                duration: 2000,
+              },
+              plugins: {
+                legend: {
+                  display: false,
+                },
+              },
+              scales: {
+                y: {
+                  border: {
+                    display: false,
+                  },
+                  grid: {
+                    display: false,
+                  },
+                  ticks: {
+                    display: false,
+                    margin: 50,
+                  },
+                },
+
+                x: {
+                  border: {
+                    display: false,
+                  },
+                  grid: {
+                    display: false,
+                  },
+                  min: 0,
+                  max: 60,
+                  ticks: {
+                    stepSize: 5,
+                    margin: 50,
+                    display: false,
+                  },
+                },
               },
             },
-            scales: {
-              y: {
-                border: {
-                  display: false,
+            data: {
+              labels: [horizontalBarChart.id.toUpperCase().replace("-", " ")],
+              datasets: [
+                {
+                  data: [horizontalBarChart.length],
+                  backgroundColor: horizontalBarChart.bgColor,
+                  barThickness: isMobileView() ? 22 : 60,
                 },
-                grid: {
-                  display: false,
-                },
-                ticks: {
-                  display: false,
-                },
-              },
-              x: {
-                border: {
-                  display: false,
-                },
-                grid: {
-                  display: false,
-                },
-                min: 0,
-                max: 60,
-                ticks: {
-                  stepSize: 5,
-                  display: false,
-                },
-              },
+              ],
             },
-          },
-          data: {
-            labels: [horizontalBarChart.id.toUpperCase().replace("-", " ")],
-            datasets: [
-              {
-                data: [horizontalBarChart.length],
-                backgroundColor: horizontalBarChart.bgColor,
-              },
-            ],
-          },
-        });
+          }
+        );
+
+        // Run this code when the last bar has been painted
+        slideOverlaysRight();
       });
     };
 
@@ -498,7 +732,8 @@
         type: "bar",
         options: {
           responsive: true,
-          aspectRatio: 1,
+          maintainAspectRatio: false,
+          barThickness: isDesktopView() || isTabletView() ? 60 : 22,
           plugins: {
             legend: {
               display: false,
@@ -510,21 +745,40 @@
               max: 100,
               ticks: {
                 stepSize: 20,
+                font: {
+                  size: remToPixel(
+                    isDesktopView() || isTabletView() ? 1.11 : 0.8
+                  ),
+                },
               },
             },
             x: {
+              border: {
+                display: false,
+              },
               grid: {
                 display: false,
+              },
+              ticks: {
+                autoSkip: false,
+                font: {
+                  size: remToPixel(
+                    isDesktopView() || isTabletView() ? 1.11 : 0.8
+                  ),
+                },
               },
             },
           },
         },
         data: {
-          labels: ["Estonia", "Latvia", "Sweden"],
+          labels:
+            isDesktopView() || isTabletView()
+              ? ["Estonia", "Latvia", "Sweden"]
+              : ["EST", "LVA", "SWE"],
           datasets: [
             {
               data: chartOneData.map((data) => data.length),
-              backgroundColor: "#003b5c",
+              backgroundColor: "#236c8b",
             },
           ],
         },
@@ -542,7 +796,7 @@
         type: "bar",
         options: {
           responsive: true,
-          aspectRatio: 1,
+          maintainAspectRatio: false,
           plugins: {
             legend: {
               display: false,
@@ -554,12 +808,24 @@
               max: 100,
               ticks: {
                 stepSize: 20,
+                font: {
+                  size: remToPixel(
+                    isDesktopView() || isTabletView() ? 1.11 : 0.8
+                  ),
+                },
               },
               border: { display: false },
             },
             x: {
               grid: {
                 display: false,
+              },
+              ticks: {
+                font: {
+                  size: remToPixel(
+                    isDesktopView() || isTabletView() ? 1.11 : 0.8
+                  ),
+                },
               },
             },
           },
@@ -569,7 +835,7 @@
           datasets: [
             {
               data: chartTwoData.map((data) => data.length),
-              backgroundColor: "#DC766C",
+              backgroundColor: "#E18F88",
             },
           ],
         },
@@ -596,11 +862,11 @@
       const dubaiDataset = [
         {
           elements: [7, 24, 7, 8, 15.5],
-          backgroundColor: "#DC766C",
+          backgroundColor: "#E18F87",
         },
         {
           elements: [9, 10.5, 9, 5.5, 4],
-          backgroundColor: "#003b5c",
+          backgroundColor: "#4c87a0",
         },
       ];
 
@@ -608,6 +874,7 @@
         type: "bar",
         options: {
           responsive: true,
+          maintainAspectRatio: false,
           plugins: {
             legend: {
               display: false,
@@ -619,6 +886,11 @@
               max: 25,
               ticks: {
                 stepSize: 5,
+                font: {
+                  size: remToPixel(
+                    isDesktopView() ? 1.11 : isTabletView() ? 0.7 : 0.55
+                  ),
+                },
               },
               border: {
                 display: false,
@@ -627,6 +899,13 @@
             x: {
               grid: {
                 display: false,
+              },
+              ticks: {
+                font: {
+                  size: remToPixel(
+                    isDesktopView() ? 1.11 : isTabletView() ? 0.7 : 0.55
+                  ),
+                },
               },
             },
           },
