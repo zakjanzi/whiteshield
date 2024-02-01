@@ -31,14 +31,6 @@
       return window.innerWidth > 1024;
     };
 
-    const isTabletView = () => {
-      return window.innerWidth >= 768 && window.innerWidth < 1024;
-    };
-
-    const isMobileView = () => {
-      return window.innerWidth < 768;
-    };
-
     function isScrolledIntoView(el) {
       var rect = el.getBoundingClientRect();
       var elemTop = rect.top;
@@ -70,6 +62,11 @@
       return givenRemValue * remValue;
     };
     // End rem to px converter setup
+
+    const setChartHeightAndWidth = (chart) => {
+      chart.canvas.parentNode.style.height = getCanvasHeight();
+      chart.canvas.parentNode.style.width = getCanvasWidth() + "%";
+    };
 
     // Line chart setup
     const drawLineChart = () => {
@@ -125,7 +122,7 @@
 
       const rect = { x: 0, y: 0 };
 
-      new Chart(document.getElementById("meta-users"), {
+      let chart = new Chart(document.getElementById("meta-users"), {
         type: "line",
         options: {
           responsive: true,
@@ -233,14 +230,26 @@
 
     // Background transition opacity
     const sectionThreeBg = document.querySelector(".section-three-bg");
-    const sectionThreeBgPos = sectionThreeBg.getBoundingClientRect().y;
+    const sectionThreeBgOverlay = document.querySelector(
+      ".section-three__bg-overlay"
+    );
     // End background transition opacity
 
     // First parallax section
     const firstParagraph = document.querySelector(".first-paragraph");
     const firstPBottom =
       firstParagraph.offsetHeight + firstParagraph.getBoundingClientRect().y;
+
     const secondParagraph = document.querySelector(".second-paragraph");
+    const secondParagraphMargin =
+      (window.innerHeight - secondParagraph.offsetHeight) / 2;
+    secondParagraph.style.marginTop = firstPBottom + secondParagraphMargin;
+    secondParagraph.style.marginBottom = secondParagraphMargin;
+
+    const lastParagraph = document.querySelector(".last-paragraph");
+    const lastParagraphMargin =
+      (window.innerHeight - lastParagraph.offsetHeight) / 2;
+    lastParagraph.style.marginBottom = lastParagraphMargin;
     // End first parallax section
 
     let firstOverlayContainer;
@@ -263,13 +272,16 @@
 
     const rightContainer = document.querySelector(".right-container");
     const leftContainer = document.querySelector(".left-container");
+    const leftContainerContent = document.querySelector(
+      ".left-container-content"
+    );
     const simplifyText = document.querySelector(".simplify-text");
-    const initialSimplifyTextPos = simplifyText.getBoundingClientRect().y;
     const satelliteImages = document.querySelector(".satellite-images");
     const paragraphTwo = document.querySelector(".paragraph-two");
     const dataTable = document.querySelector(".data-table");
     const scoringFormula = document.querySelector(".scoring-formula-container");
     const paragraphThree = document.querySelector(".paragraph-three");
+
     const footerBgTwoMobile = document.querySelector(".footer-bg-two-mobile");
     const paragraphThreeMobile = document.querySelector(
       ".paragraph-three-mobile"
@@ -283,6 +295,7 @@
       SCORING_FORMULA: "SCORING_FORMULA",
       PARAGRAPH_THREE: "PARAGRAPH_THREE",
     };
+
     // End last section page parallax
 
     const endOfPageReached = () => {
@@ -300,10 +313,19 @@
       viewedSections.splice(sectionIndex, 1);
     };
 
-    const showOrHideSatelliteImages = () => {
+    let lastScrollTop = leftContainerContent.scrollTop;
+
+    const showOrHideSatelliteImages = (e) => {
       if (simplifyText.getBoundingClientRect().y <= 0) {
         if (sectionViewed(SECTIONS.SATELLITE_IMAGES)) return;
         satelliteImages.classList.add("fade-in");
+
+        if (!reverseScrollPosObj["satelliteImages"]) {
+          savePosition({
+            id: "satelliteImages",
+            position: simplifyText.getBoundingClientRect().top,
+          });
+        }
 
         // Hide others
         dataTable.classList.remove("fade-in");
@@ -320,11 +342,13 @@
       }
     };
 
-    const showOrHideDataTable = () => {
+    const showOrHideDataTable = (e) => {
       if (
         paragraphThree.getBoundingClientRect().y <= window.innerHeight - 150 &&
         displayedPThree.state
       ) {
+        paragraphThree.style.marginBottom =
+          (window.innerHeight - paragraphThree.offsetHeight) / 2 + "px";
         firstOverlayContainer.classList.add("simplify-fade-in");
       }
 
@@ -333,6 +357,8 @@
         !displayedPThree.state
       ) {
         displayedPThree.state = true;
+
+        isReverseScrollActive = true;
 
         scoringFormula.classList.remove("fade-in");
 
@@ -343,14 +369,18 @@
         lastSectionContainer.classList.add("show-bg-img-2");
       }
 
-      if (
-        paragraphTwo.getBoundingClientRect().y + 5 <=
-        Math.abs(
-          window.innerHeight - (window.innerHeight + paragraphTwo.offsetHeight)
-        )
-      ) {
+      if (paragraphTwo.getBoundingClientRect().y <= 10) {
         if (sectionViewed(SECTIONS.SCORING_FORMULA)) return;
         scoringFormula.classList.add("fade-in");
+
+        if (!reverseScrollPosObj["scoringFormula"]) {
+          savePosition({
+            id: "scoringFormula",
+            position:
+              paragraphTwo.getBoundingClientRect().top +
+              paragraphTwo.offsetHeight,
+          });
+        }
 
         // Hide others
         satelliteImages.classList.remove("fade-in");
@@ -366,6 +396,13 @@
         if (sectionViewed(SECTIONS.DATA_TABLE)) return;
         dataTable.classList.add("fade-in");
 
+        if (!reverseScrollPosObj["dataTable"]) {
+          savePosition({
+            id: "dataTable",
+            position: paragraphTwo.getBoundingClientRect().top,
+          });
+        }
+
         // Hide others
         satelliteImages.classList.remove("fade-in");
         scoringFormula.classList.remove("fade-in");
@@ -378,8 +415,103 @@
       state: false,
     };
 
+    let isReverseScrollActive = false;
+
+    const reverseScrollPosObj = {};
+
+    const savePosition = (positionDetails) => {
+      reverseScrollPosObj[positionDetails.id] = positionDetails.position;
+    };
+
+    const handleReverseScroll = (e) => {
+      if (!isReverseScrollActive) return;
+
+      console.log("Reverse position: ", reverseScrollPosObj);
+
+      console.log(
+        "data table show",
+        paragraphTwo.getBoundingClientRect().y,
+        "pg2 pos:",
+        reverseScrollPosObj["paragraphTwo"],
+        "pg3 pos:",
+        reverseScrollPosObj["paragraphThree"],
+        paragraphTwo.getBoundingClientRect().y <
+          reverseScrollPosObj["paragraphTwo"] &&
+          paragraphTwo.getBoundingClientRect().y <
+            reverseScrollPosObj["paragraphThree"]
+      );
+
+      if (
+        simplifyText.getBoundingClientRect().y <=
+        reverseScrollPosObj["satelliteImages"]
+      ) {
+        console.log("simplify");
+        satelliteImages.classList.add("fade-in");
+
+        dataTable.classList.remove("fade-in");
+        scoringFormula.classList.remove("fade-in");
+      }
+
+      if (
+        paragraphTwo.getBoundingClientRect().y <=
+          reverseScrollPosObj["scoringFormula"] &&
+        paragraphTwo.getBoundingClientRect().y >=
+          reverseScrollPosObj["dataTable"]
+      ) {
+        console.log("scoringFormula");
+        scoringFormula.classList.add("fade-in");
+
+        satelliteImages.classList.remove("fade-in");
+        dataTable.classList.remove("fade-in");
+      }
+
+      if (
+        paragraphTwo.getBoundingClientRect().y <
+          reverseScrollPosObj["scoringFormula"] &&
+        paragraphTwo.getBoundingClientRect().y <
+          reverseScrollPosObj["dataTable"]
+      ) {
+        console.log("data table");
+        dataTable.classList.add("fade-in");
+
+        satelliteImages.classList.remove("fade-in");
+        scoringFormula.classList.remove("fade-in");
+      }
+    };
+
+    // const getPositionsOfLeftContainerItems = () => {
+    //   savePosition({
+    //     id: "simplify",
+    //     position: simplifyText.getBoundingClientRect().top,
+    //   });
+
+    //   savePosition({
+    //     id: "paragraphThree",
+    //     position:
+    //       paragraphTwo.getBoundingClientRect().top + paragraphTwo.offsetHeight,
+    //   });
+
+    //   savePosition({
+    //     id: "paragraphTwo",
+    //     position: paragraphTwo.getBoundingClientRect().top,
+    //   });
+    // };
+
+    function handleScroll() {
+      const scrollTopPosition =
+        window.pageYOffset || document.documentElement.scrollTop;
+
+      if (scrollTopPosition > lastScrollTop) {
+        console.log("scrolling down");
+      } else if (scrollTopPosition < lastScrollTop) {
+        console.log("scrolling up");
+      }
+      lastScrollTop = scrollTopPosition <= 0 ? 0 : scrollTopPosition;
+    }
+
     const setupScrollListenerForLastSection = () => {
       const handler = (e) => {
+        // handleScroll()
         if (
           simplifyText.getBoundingClientRect().y <
             window.innerHeight - simplifyText.offsetHeight &&
@@ -387,21 +519,28 @@
         ) {
           firstOverlayContainer.classList.add("simplify-fade-in");
         } else if (
-          Math.round(simplifyText.getBoundingClientRect().y) ===
-          window.innerHeight
+          Math.round(simplifyText.getBoundingClientRect().y) >=
+            window.innerHeight &&
+          lastSectionParallaxActive
         ) {
           firstOverlayContainer.classList.remove("simplify-fade-in");
 
           lastSectionParallaxActive = false;
 
+          leftContainer.style.overflowY = "hidden";
+
           leftContainer.style.overscrollBehavior = "initial";
 
           leftContainer.removeEventListener("scroll", lastSectionListener);
+
+          window.scrollTo(window.scrollX, window.scrollY - 10);
         }
 
-        showOrHideSatelliteImages();
+        showOrHideSatelliteImages(e);
 
-        showOrHideDataTable();
+        showOrHideDataTable(e);
+
+        // handleReverseScroll(e);
       };
 
       lastSectionListener = leftContainer.addEventListener("scroll", handler);
@@ -415,7 +554,6 @@
         leftContainer.style.overscrollBehavior = "contain";
 
         setupScrollListenerForLastSection();
-      } else if (endOfPageReached() && lastSectionParallaxActive) {
       }
     };
 
@@ -499,6 +637,9 @@
         const handler = (e) => {
           let firstOverlayActive = false;
 
+          // paragraphThreeMobile.style.marginBottom =
+          //   (window.innerHeight - paragraphThreeMobile.offsetHeight) / 2 + "px";
+
           if (
             simplifyText.getBoundingClientRect().y <
               window.innerHeight - window.innerHeight / 2 &&
@@ -524,6 +665,7 @@
 
             lastSectionParallaxActive = false;
 
+            leftContainer.style.overflowY = "hidden";
             leftContainer.style.overscrollBehavior = "initial";
 
             leftContainer.removeEventListener("scroll", lastSectionListener);
@@ -578,23 +720,22 @@
       }
       // End for last section of the page
 
-      if (window.scrollY >= firstPBottom) {
-        if (!secondParagraph.classList.contains("fade-bg")) {
-          secondParagraph.classList.add("fade-bg");
-        }
-      } else {
-        if (secondParagraph.classList.contains("fade-bg")) {
-          secondParagraph.classList.remove("fade-bg");
-        }
+      // Fade section three into view
+      if (window.innerHeight / 2 >= sectionThreeBg.getBoundingClientRect().y) {
+        sectionThreeBgOverlay.classList.add("fade-in");
+
+        // Makes section three parallax background visible
+
+        sectionThreeBg.classList.add("fade-in");
       }
 
-      // For Background transition opacity (map section)
-      if (window.scrollY + window.innerHeight / 2 >= sectionThreeBgPos) {
-        if (sectionThreeBg.classList.contains("bg-map")) return;
-
-        sectionThreeBg.classList.add("bg-map");
+      // show parallax for section three by removing overlay
+      if (
+        secondParagraph.getBoundingClientRect().y <
+        (window.innerHeight - secondParagraph.offsetHeight) / 2
+      ) {
+        sectionThreeBgOverlay.classList.remove("fade-in");
       }
-      // End for background transition opacity
     });
 
     const getCanvasHeight = () => {
@@ -622,7 +763,7 @@
 
         const interval = setInterval(() => {
           if (pixelsDeducted >= +barSizeLabelPosition.split("%")[0]) {
-            overlay.style.left = pixelsDeducted - 4 + "%";
+            overlay.style.left = pixelsDeducted - 2 + "%";
 
             clearInterval(interval);
           } else {
@@ -644,9 +785,8 @@
         });
       };
 
-      const setChartHeightAndWidth = (chart) => {
-        chart.canvas.parentNode.style.height = getCanvasHeight();
-        chart.canvas.parentNode.style.width = getCanvasWidth() + "%";
+      const isMobileView = () => {
+        return window.innerWidth < 768;
       };
 
       [
@@ -663,9 +803,6 @@
               indexAxis: "y",
               responsive: true,
               maintainAspectRatio: false,
-              animation: {
-                duration: 2000,
-              },
               plugins: {
                 legend: {
                   display: false,
@@ -715,6 +852,8 @@
           }
         );
 
+        //setChartHeightAndWidth(chart);
+
         // Run this code when the last bar has been painted
         slideOverlaysRight();
       });
@@ -733,7 +872,7 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          barThickness: isDesktopView() || isTabletView() ? 60 : 22,
+          barThickness: isDesktopView() ? 60 : 22,
           plugins: {
             legend: {
               display: false,
@@ -746,9 +885,7 @@
               ticks: {
                 stepSize: 20,
                 font: {
-                  size: remToPixel(
-                    isDesktopView() || isTabletView() ? 1.11 : 0.8
-                  ),
+                  size: remToPixel(isDesktopView() ? 1.11 : 0.8),
                 },
               },
             },
@@ -762,19 +899,16 @@
               ticks: {
                 autoSkip: false,
                 font: {
-                  size: remToPixel(
-                    isDesktopView() || isTabletView() ? 1.11 : 0.8
-                  ),
+                  size: remToPixel(isDesktopView() ? 1.11 : 0.8),
                 },
               },
             },
           },
         },
         data: {
-          labels:
-            isDesktopView() || isTabletView()
-              ? ["Estonia", "Latvia", "Sweden"]
-              : ["EST", "LVA", "SWE"],
+          labels: isDesktopView()
+            ? ["Estonia", "Latvia", "Sweden"]
+            : ["EST", "LVA", "SWE"],
           datasets: [
             {
               data: chartOneData.map((data) => data.length),
@@ -809,9 +943,7 @@
               ticks: {
                 stepSize: 20,
                 font: {
-                  size: remToPixel(
-                    isDesktopView() || isTabletView() ? 1.11 : 0.8
-                  ),
+                  size: remToPixel(isDesktopView() ? 1.11 : 0.8),
                 },
               },
               border: { display: false },
@@ -822,9 +954,7 @@
               },
               ticks: {
                 font: {
-                  size: remToPixel(
-                    isDesktopView() || isTabletView() ? 1.11 : 0.8
-                  ),
+                  size: remToPixel(isDesktopView() ? 1.11 : 0.8),
                 },
               },
             },
@@ -887,9 +1017,7 @@
               ticks: {
                 stepSize: 5,
                 font: {
-                  size: remToPixel(
-                    isDesktopView() ? 1.11 : isTabletView() ? 0.7 : 0.55
-                  ),
+                  size: remToPixel(isDesktopView() ? 1.11 : 0.55),
                 },
               },
               border: {
@@ -902,9 +1030,7 @@
               },
               ticks: {
                 font: {
-                  size: remToPixel(
-                    isDesktopView() ? 1.11 : isTabletView() ? 0.7 : 0.55
-                  ),
+                  size: remToPixel(isDesktopView() ? 1.11 : 0.55),
                 },
               },
             },
