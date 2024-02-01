@@ -313,8 +313,6 @@
       viewedSections.splice(sectionIndex, 1);
     };
 
-    let lastScrollTop = leftContainerContent.scrollTop;
-
     const showOrHideSatelliteImages = (e) => {
       if (simplifyText.getBoundingClientRect().y <= 0) {
         if (sectionViewed(SECTIONS.SATELLITE_IMAGES)) return;
@@ -323,7 +321,7 @@
         if (!reverseScrollPosObj["satelliteImages"]) {
           savePosition({
             id: "satelliteImages",
-            position: simplifyText.getBoundingClientRect().top,
+            position: lastScrollTop,
           });
         }
 
@@ -349,6 +347,7 @@
       ) {
         paragraphThree.style.marginBottom =
           (window.innerHeight - paragraphThree.offsetHeight) / 2 + "px";
+
         firstOverlayContainer.classList.add("simplify-fade-in");
       }
 
@@ -357,8 +356,6 @@
         !displayedPThree.state
       ) {
         displayedPThree.state = true;
-
-        isReverseScrollActive = true;
 
         scoringFormula.classList.remove("fade-in");
 
@@ -373,18 +370,16 @@
         if (sectionViewed(SECTIONS.SCORING_FORMULA)) return;
         scoringFormula.classList.add("fade-in");
 
-        if (!reverseScrollPosObj["scoringFormula"]) {
-          savePosition({
-            id: "scoringFormula",
-            position:
-              paragraphTwo.getBoundingClientRect().top +
-              paragraphTwo.offsetHeight,
-          });
-        }
+        savePosition({
+          id: "scoringFormula",
+          position: lastScrollTop,
+        });
 
         // Hide others
         satelliteImages.classList.remove("fade-in");
         dataTable.classList.remove("fade-in");
+
+        displayedPThree.state = false;
 
         viewedSections.push(SECTIONS.SCORING_FORMULA);
       }
@@ -399,7 +394,7 @@
         if (!reverseScrollPosObj["dataTable"]) {
           savePosition({
             id: "dataTable",
-            position: paragraphTwo.getBoundingClientRect().top,
+            position: lastScrollTop,
           });
         }
 
@@ -415,8 +410,6 @@
       state: false,
     };
 
-    let isReverseScrollActive = false;
-
     const reverseScrollPosObj = {};
 
     const savePosition = (positionDetails) => {
@@ -424,94 +417,59 @@
     };
 
     const handleReverseScroll = (e) => {
-      if (!isReverseScrollActive) return;
+      if (
+        lastScrollTop < reverseScrollPosObj["scoringFormula"] &&
+        lastScrollTop + window.innerHeight > reverseScrollPosObj["dataTable"]
+      ) {
+        scoringFormula.classList.add("fade-in");
 
-      console.log("Reverse position: ", reverseScrollPosObj);
-
-      console.log(
-        "data table show",
-        paragraphTwo.getBoundingClientRect().y,
-        "pg2 pos:",
-        reverseScrollPosObj["paragraphTwo"],
-        "pg3 pos:",
-        reverseScrollPosObj["paragraphThree"],
-        paragraphTwo.getBoundingClientRect().y <
-          reverseScrollPosObj["paragraphTwo"] &&
-          paragraphTwo.getBoundingClientRect().y <
-            reverseScrollPosObj["paragraphThree"]
-      );
+        satelliteImages.classList.remove("fade-in");
+        dataTable.classList.remove("fade-in");
+        return;
+      }
 
       if (
-        simplifyText.getBoundingClientRect().y <=
-        reverseScrollPosObj["satelliteImages"]
+        lastScrollTop > reverseScrollPosObj["scoringFormula"] &&
+        lastScrollTop < reverseScrollPosObj["dataTable"]
       ) {
-        console.log("simplify");
+        dataTable.classList.add("fade-in");
+
+        satelliteImages.classList.remove("fade-in");
+        scoringFormula.classList.remove("fade-in");
+        return;
+      }
+
+      if (
+        lastScrollTop >= reverseScrollPosObj["satelliteImages"] &&
+        lastScrollTop > reverseScrollPosObj["dataTable"]
+      ) {
         satelliteImages.classList.add("fade-in");
 
         dataTable.classList.remove("fade-in");
         scoringFormula.classList.remove("fade-in");
       }
-
-      if (
-        paragraphTwo.getBoundingClientRect().y <=
-          reverseScrollPosObj["scoringFormula"] &&
-        paragraphTwo.getBoundingClientRect().y >=
-          reverseScrollPosObj["dataTable"]
-      ) {
-        console.log("scoringFormula");
-        scoringFormula.classList.add("fade-in");
-
-        satelliteImages.classList.remove("fade-in");
-        dataTable.classList.remove("fade-in");
-      }
-
-      if (
-        paragraphTwo.getBoundingClientRect().y <
-          reverseScrollPosObj["scoringFormula"] &&
-        paragraphTwo.getBoundingClientRect().y <
-          reverseScrollPosObj["dataTable"]
-      ) {
-        console.log("data table");
-        dataTable.classList.add("fade-in");
-
-        satelliteImages.classList.remove("fade-in");
-        scoringFormula.classList.remove("fade-in");
-      }
     };
 
-    // const getPositionsOfLeftContainerItems = () => {
-    //   savePosition({
-    //     id: "simplify",
-    //     position: simplifyText.getBoundingClientRect().top,
-    //   });
-
-    //   savePosition({
-    //     id: "paragraphThree",
-    //     position:
-    //       paragraphTwo.getBoundingClientRect().top + paragraphTwo.offsetHeight,
-    //   });
-
-    //   savePosition({
-    //     id: "paragraphTwo",
-    //     position: paragraphTwo.getBoundingClientRect().top,
-    //   });
-    // };
+    let lastScrollTop =
+      leftContainerContent.getBoundingClientRect().top + window.innerHeight;
 
     function handleScroll() {
       const scrollTopPosition =
-        window.pageYOffset || document.documentElement.scrollTop;
+        leftContainerContent.getBoundingClientRect().top + window.innerHeight;
 
       if (scrollTopPosition > lastScrollTop) {
-        console.log("scrolling down");
+        handleReverseScroll();
       } else if (scrollTopPosition < lastScrollTop) {
-        console.log("scrolling up");
       }
-      lastScrollTop = scrollTopPosition <= 0 ? 0 : scrollTopPosition;
+
+      lastScrollTop = scrollTopPosition;
     }
 
     const setupScrollListenerForLastSection = () => {
       const handler = (e) => {
-        // handleScroll()
+        // This function will be used to get the positions at which each item on the right is displayed
+        handleScroll();
+
         if (
           simplifyText.getBoundingClientRect().y <
             window.innerHeight - simplifyText.offsetHeight &&
@@ -523,6 +481,8 @@
             window.innerHeight &&
           lastSectionParallaxActive
         ) {
+          satelliteImages.classList.remove("fade-in");
+
           firstOverlayContainer.classList.remove("simplify-fade-in");
 
           lastSectionParallaxActive = false;
@@ -637,8 +597,8 @@
         const handler = (e) => {
           let firstOverlayActive = false;
 
-          // paragraphThreeMobile.style.marginBottom =
-          //   (window.innerHeight - paragraphThreeMobile.offsetHeight) / 2 + "px";
+          paragraphThreeMobile.style.marginBottom =
+            (window.innerHeight - paragraphThreeMobile.offsetHeight) / 2 + "px";
 
           if (
             simplifyText.getBoundingClientRect().y <
