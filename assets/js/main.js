@@ -31,6 +31,10 @@
       return window.innerWidth > 1024;
     };
 
+    const isMobileView = () => {
+      return window.innerWidth < 768;
+    };
+
     function isScrolledIntoView(el) {
       var rect = el.getBoundingClientRect();
       var elemTop = rect.top;
@@ -270,11 +274,16 @@
       ".last-section-container"
     );
 
-    const rightContainer = document.querySelector(".right-container");
     const leftContainer = document.querySelector(".left-container");
-    const leftContainerContent = document.querySelector(
-      ".left-container-content"
-    );
+
+    // These settings prevent the left container from being scrollable until the base of the page is reached
+    // leftContainer.style.overflowY = "hidden";
+    // leftContainer.style.height = "100%";
+    // End settings setup
+
+    const leftContainerContent = isMobileView()
+      ? document.querySelector(".left-container-content.mobile")
+      : document.querySelector(".left-container-content");
     const simplifyText = document.querySelector(".simplify-text");
     const satelliteImages = document.querySelector(".satellite-images");
     const paragraphTwo = document.querySelector(".paragraph-two");
@@ -286,6 +295,7 @@
     const paragraphThreeMobile = document.querySelector(
       ".paragraph-three-mobile"
     );
+
     let lastSectionParallaxActive = false;
     let lastSectionListener;
     let viewedSections = [];
@@ -451,7 +461,7 @@
     };
 
     let lastScrollTop =
-      leftContainerContent.getBoundingClientRect().top + window.innerHeight;
+      leftContainerContent?.getBoundingClientRect().top + window.innerHeight;
 
     function handleScroll() {
       const scrollTopPosition =
@@ -491,7 +501,7 @@
 
           leftContainer.style.overscrollBehavior = "initial";
 
-          leftContainer.removeEventListener("scroll", lastSectionListener);
+          leftContainer.removeEventListener("scroll", handler);
 
           window.scrollTo(window.scrollX, window.scrollY - 10);
         }
@@ -499,11 +509,9 @@
         showOrHideSatelliteImages(e);
 
         showOrHideDataTable(e);
-
-        // handleReverseScroll(e);
       };
 
-      lastSectionListener = leftContainer.addEventListener("scroll", handler);
+      leftContainer.addEventListener("scroll", handler);
     };
 
     const handleLastSectionParallax = () => {
@@ -589,89 +597,84 @@
       drawnCharts.length === 5;
     };
 
+    let initialPos = Math.abs(
+      leftContainerContent.getBoundingClientRect().y -
+        window.scrollY +
+        innerHeight
+    );
+
+    const lastSectionMobileScrollHandler = () => {
+      let currentPos =
+        leftContainerContent.getBoundingClientRect().y +
+        innerHeight +
+        initialPos;
+
+      // Condition required to show first overlay container
+      if (leftContainerContent.getBoundingClientRect().y < innerHeight / 3) {
+        firstOverlayContainer.classList.add("simplify-fade-in");
+      }
+
+      if (currentPos >= window.scrollY && lastSectionParallaxActive) {
+        firstOverlayContainer.classList.remove("simplify-fade-in");
+
+        lastSectionParallaxActive = false;
+
+        leftContainer.style.overflowY = "clip";
+        leftContainer.style.height = "100%";
+        leftContainer.style.overscrollBehavior = "initial";
+
+        leftContainer.removeEventListener(
+          "scroll",
+          lastSectionMobileScrollHandler
+        );
+
+        window.scrollTo(0, window.scrollY - 20);
+      }
+
+      if (
+        scoringFormula.getBoundingClientRect().y <=
+          innerHeight - scoringFormula.offsetHeight &&
+        paragraphThreeMobile.getBoundingClientRect().y <= innerHeight
+      ) {
+        // handle the background fade in after scoring formula section
+        paragraphThreeMobile.style.marginBottom =
+          (window.innerHeight - paragraphThreeMobile.offsetHeight) / 2 + "px";
+
+        // Fade out left container (This is the container for all elements being scrolled in the footer)
+        leftContainer.classList.add("fade-out-animation");
+
+        // Fade in new background
+        footerBgTwoMobile.classList.add("fade-in-footer-bg-two");
+
+        // Fade out overlay
+        firstOverlayContainer.classList.remove("simplify-fade-in");
+      }
+
+      if (
+        paragraphThreeMobile.getBoundingClientRect().y <
+        window.innerHeight - window.innerHeight * 0.6
+      ) {
+        firstOverlayContainer.classList.add("simplify-fade-in");
+
+        // firstOverlayContainer.classList.add("fade-in-important");
+      }
+    };
+
     window.addEventListener("scroll", (e) => {
       showAnimatedChart();
 
       // handle mobile view on scroll
-      if (!isDesktopView() && endOfPageReached()) {
-        const handler = (e) => {
-          let firstOverlayActive = false;
+      if (isMobileView() && endOfPageReached() && !lastSectionParallaxActive) {
+        lastSectionParallaxActive = true;
 
-          paragraphThreeMobile.style.marginBottom =
-            (window.innerHeight - paragraphThreeMobile.offsetHeight) / 2 + "px";
+        leftContainer.style.overflowY = "scroll";
+        leftContainer.style.height = "inherit";
+        leftContainer.style.overscrollBehavior = "contain";
 
-          if (
-            simplifyText.getBoundingClientRect().y <
-              window.innerHeight - window.innerHeight / 2 &&
-            simplifyText.getBoundingClientRect().y > 10
-          ) {
-            if (!firstOverlayActive) {
-              firstOverlayContainer.classList.add("simplify-fade-in");
-              firstOverlayActive = true;
-            }
-
-            lastSectionParallaxActive = true;
-
-            leftContainer.style.overflowY = "scroll";
-            leftContainer.style.overscrollBehavior = "contain";
-          }
-          let overlayDisabled = false;
-          if (
-            Math.round(simplifyText.getBoundingClientRect().y) >
-              window.innerHeight / 2 &&
-            !overlayDisabled
-          ) {
-            firstOverlayContainer.classList.remove("simplify-fade-in");
-
-            lastSectionParallaxActive = false;
-
-            leftContainer.style.overflowY = "hidden";
-            leftContainer.style.overscrollBehavior = "initial";
-
-            leftContainer.removeEventListener("scroll", lastSectionListener);
-            overlayDisabled = true;
-          }
-
-          if (
-            scoringFormula.getBoundingClientRect().y <=
-              -(window.innerHeight - scoringFormula.offsetHeight) &&
-            paragraphThreeMobile.getBoundingClientRect().y > window.innerHeight
-          ) {
-            // handle the background fade in after scoring formula section
-
-            // Fade out left container (This is the container for all elements being scrolled in the footer)
-            leftContainer.classList.add("fade-out-animation");
-
-            // Fade in new background
-            footerBgTwoMobile.classList.add("fade-in-animation");
-
-            // Fade out overlay
-            firstOverlayContainer.classList.remove("simplify-fade-in");
-          }
-
-          if (
-            scoringFormula.getBoundingClientRect().y >=
-              -(window.innerHeight - scoringFormula.offsetHeight) &&
-            !overlayDisabled
-          ) {
-            leftContainer.classList.remove("fade-out-animation");
-
-            footerBgTwoMobile.classList.remove("fade-in-animation");
-
-            firstOverlayContainer.classList.add("simplify-fade-in");
-          }
-
-          if (
-            paragraphThreeMobile.getBoundingClientRect().y <
-            window.innerHeight - window.innerHeight * 0.6
-          ) {
-            firstOverlayContainer.classList.add("simplify-fade-in");
-
-            // firstOverlayContainer.classList.add("fade-in-important");
-          }
-        };
-
-        lastSectionListener = leftContainer.addEventListener("scroll", handler);
+        leftContainer.addEventListener(
+          "scroll",
+          lastSectionMobileScrollHandler
+        );
       }
 
       // For last section of the page
@@ -1007,5 +1010,7 @@
         },
       });
     };
+
+    document.body.style.width = window.innerWidth;
   });
 })();
