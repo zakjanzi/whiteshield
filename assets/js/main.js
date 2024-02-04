@@ -91,20 +91,6 @@
 
     // Line chart setup
     const drawLineChart = () => {
-      const showDummyLineChart = () => {
-        const graphImage = document.querySelector("#meta-users-dummy-chart");
-        graphImage.classList.remove("z-1");
-        graphImage.classList.add("z-3");
-        graphImage.classList.add("fade-in-normal");
-      };
-
-      const hideDummyLineChart = () => {
-        const graphImage = document.querySelector("#meta-users-dummy-chart");
-        graphImage.classList.remove("fade-in-animation");
-        graphImage.classList.remove("z-3");
-        graphImage.classList.add("z-1");
-      };
-
       const data = [
         { num_users: 3.5, quarter: "" },
         { num_users: 3.65, quarter: "Q2 '22" },
@@ -155,8 +141,10 @@
         },
       };
 
-      const rect = { x: 0, y: 0 };
+      const rect = { x: 0, y: 0, prevX: 0 };
       let chartPainted = false;
+      // var canvasMoveCounter = 0;
+      // var canvasPrevPos = 0;
 
       let lineChart = new Chart(document.getElementById("meta-users"), {
         type: "line",
@@ -196,8 +184,32 @@
                 }
               );
 
+            const position = chart.canvas.getBoundingClientRect();
+
+            // if (chartPainted) {
+            //   if (canvasPrevPos > canvasPositionX) {
+            //     canvasMoveCounter -= 1;
+            //   } else {
+            //     canvasMoveCounter += 1;
+            //   }
+
+            //   let canvasPrevPos = canvasPositionX;
+
+            //   if (Math.abs(canvasMoveCounter) >= 40) {
+            //     chartPainted = false;
+            //     canvasMoveCounter = 0;
+            //     // remove generated tooltip
+            //     document.querySelector("#chartjs-tooltip").remove();
+
+            //     document.querySelector("#chartjs-tooltip-circle").remove();
+
+            //     document.querySelector("#chartjs-tooltip-line").remove();
+            //   }
+            // }
+
             if (tooltipsPositions?.length > 0 && !chartPainted) {
-              // ctx.save();
+              chartPainted = true;
+
               // Show tooltip for the line intersect
               const meta = chart.getDatasetMeta(0);
 
@@ -212,12 +224,13 @@
                 }
               }
 
-              const position = chart.canvas.getBoundingClientRect();
-
               let tooltipEl;
               let intersectingCircle;
+              let dashedLine;
 
-              // Create tooltip element and intersecting circle
+              rect.x = canvasPositionX;
+
+              // Create tooltip element, dashed line and intersecting circle
               if (!tooltipEl) {
                 tooltipEl = document.createElement("div");
                 tooltipEl.id = "chartjs-tooltip";
@@ -237,7 +250,7 @@
                 intersectingCircle.style.top =
                   position.top +
                   window.scrollY +
-                  meta.data[tooltipIndex].y -
+                  meta.data[tooltipIndex]?.y -
                   10 +
                   "px";
                 intersectingCircle.style.font = "inherit";
@@ -250,7 +263,27 @@
                 intersectingCircle.style.borderRadius = "50px";
                 intersectingCircle.style.zIndex = 1000;
                 intersectingCircle.style.pointerEvents = "none";
-                document.body.appendChild(intersectingCircle);
+                //document.body.appendChild(intersectingCircle);
+                // intersecting circle end
+
+                // dashed line start
+                // dashedLine = document.createElement("div");
+                // dashedLine.id = "chartjs-tooltip-line";
+                // dashedLine.innerHTML = "<div></div>";
+                // dashedLine.style.position = "absolute";
+                // dashedLine.style.left =
+                //   position.left +
+                //   meta.data[tooltipIndex]?.x -
+                //   (isDesktopView() ? 1 : 15) +
+                //   "px";
+                // dashedLine.style.top = position.top + window.scrollY + "px";
+                // dashedLine.style.height = chart.canvas.height - 30 + "px";
+                // dashedLine.style.borderWidth = "0.1rem";
+                // dashedLine.style.borderStyle = "dashed";
+                // dashedLine.style.borderColor = "rgba(0,0,0,0.5)";
+                // dashedLine.style.zIndex = 100;
+                // document.body.appendChild(dashedLine);
+                // dashed line end
               }
 
               // Hide if no tooltip
@@ -282,17 +315,17 @@
                 '<span style="' +
                 style +
                 '">' +
-                meta._parsed[tooltipIndex].y +
+                meta._parsed[tooltipIndex]?.y +
                 " bn</span>";
               innerHtml += "<tr><td>" + span + "</td></tr>";
 
               innerHtml += "</tbody>";
 
               let tableRoot = tooltipEl.querySelector("table");
-              tableRoot.innerHTML = innerHtml;
+              //tableRoot.innerHTML = innerHtml;
 
               // Display, position, and set styles for font
-              tooltipEl.style.opacity = 1;
+              tooltipEl.style.opacity = 0;
               tooltipEl.style.position = "absolute";
               tooltipEl.style.left =
                 position.left + meta.data[tooltipIndex]?.x + 22 + "px";
@@ -311,47 +344,6 @@
               tooltipEl.style.fontSize = "1rem";
               tooltipEl.style.pointerEvents = "none";
               // End show tooltip
-
-              // Begin drawing dashed lines
-              ctx.beginPath();
-              ctx.lineWidth = 0.3;
-              ctx.strokeStyle = "rgba(0,0,0,1)";
-              ctx.setLineDash([10, 10]);
-              rect.x = canvasPositionX;
-              rect.y = tooltipsPositions[0]?.ty1 - position.bottom;
-              ctx.moveTo(canvasPositionX, rect.y);
-              ctx.lineTo(canvasPositionX, bottom);
-              ctx.stroke();
-              ctx.closePath();
-              ctx.setLineDash([]);
-              // End drawing dashed lines
-
-              chartPainted = true;
-            } else {
-              if (
-                (canvasPositionX > rect.x + isDesktopView()
-                  ? 30
-                  : 25 || canvasPositionX < rect.x - isDesktopView()
-                  ? 30
-                  : 20) &&
-                chartPainted
-              ) {
-                // tooltip.setActiveElements([]);
-
-                showDummyLineChart();
-
-                // remove generated tooltip
-                document.querySelector("#chartjs-tooltip").remove();
-
-                document.querySelector("#chartjs-tooltip-circle").remove();
-
-                chart.update();
-
-                hideDummyLineChart();
-
-                chartPainted = false;
-                return;
-              }
             }
           },
           scales: {

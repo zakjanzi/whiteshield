@@ -667,6 +667,10 @@ body {
   font-size: 1.11rem /* 15px */;
 }
 
+.data-availability-text {
+  padding: 1.5rem 1.5rem 0rem;
+}
+
 @media (min-width: 1024px) {
   .section-four {
     padding-left: 22.135%;
