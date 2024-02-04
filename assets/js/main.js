@@ -27,6 +27,9 @@
     });
     // End read more button click
 
+    // Set font for Chartjs
+    Chart.defaults.font.family = "Montserrat";
+
     const isDesktopView = () => {
       return window.innerWidth > 1024;
     };
@@ -72,8 +75,36 @@
       chart.canvas.parentNode.style.width = getCanvasWidth() + "%";
     };
 
+    const plugin = {
+      id: "savetopng",
+
+      afterRender: function (chart, options) {
+        if (!chart.$initialImage) {
+          chart.$initialImage = chart.canvas.toDataURL("image/png");
+          document.querySelector("#meta-users-dummy-chart").src =
+            chart.$initialImage;
+        }
+      },
+    };
+
+    Chart.register(plugin);
+
     // Line chart setup
     const drawLineChart = () => {
+      const showDummyLineChart = () => {
+        const graphImage = document.querySelector("#meta-users-dummy-chart");
+        graphImage.classList.remove("z-1");
+        graphImage.classList.add("z-3");
+        graphImage.classList.add("fade-in-normal");
+      };
+
+      const hideDummyLineChart = () => {
+        const graphImage = document.querySelector("#meta-users-dummy-chart");
+        graphImage.classList.remove("fade-in-animation");
+        graphImage.classList.remove("z-3");
+        graphImage.classList.add("z-1");
+      };
+
       const data = [
         { num_users: 3.5, quarter: "" },
         { num_users: 3.65, quarter: "Q2 '22" },
@@ -125,15 +156,22 @@
       };
 
       const rect = { x: 0, y: 0 };
+      let chartPainted = false;
 
-      let chart = new Chart(document.getElementById("meta-users"), {
+      let lineChart = new Chart(document.getElementById("meta-users"), {
         type: "line",
+
         options: {
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
             legend: {
               display: false,
+            },
+            tooltip: {
+              // Disable the on-canvas tooltip
+              enabled: false,
+              position: "nearest",
             },
           },
           onHover: (e, _, chart) => {
@@ -150,26 +188,170 @@
             ).x;
 
             const tooltipsPositions =
-              tooltip.chart.scales.x._gridLineItems.filter((tooltip, index) => {
-                return index > 0 && Math.round(tooltip.tx1) === canvasPositionX;
-              });
+              tooltip.chart.scales.x._gridLineItems?.filter(
+                (tooltip, index) => {
+                  return (
+                    index > 0 && Math.round(tooltip.tx1) === canvasPositionX
+                  );
+                }
+              );
 
-            if (tooltipsPositions.length > 0) {
-              rect.x = canvasPositionX;
-              rect.y = tooltipsPositions[0].ty1 - 600;
-              ctx.save();
+            if (tooltipsPositions?.length > 0 && !chartPainted) {
+              // ctx.save();
+              // Show tooltip for the line intersect
+              const meta = chart.getDatasetMeta(0);
+
+              let tooltipIndex;
+
+              for (let j = 0; j < meta.data.length; j++) {
+                if (
+                  Math.floor(meta.data[j].x) ===
+                  Math.floor(tooltipsPositions[0].tx1)
+                ) {
+                  tooltipIndex = j;
+                }
+              }
+
+              const position = chart.canvas.getBoundingClientRect();
+
+              let tooltipEl;
+              let intersectingCircle;
+
+              // Create tooltip element and intersecting circle
+              if (!tooltipEl) {
+                tooltipEl = document.createElement("div");
+                tooltipEl.id = "chartjs-tooltip";
+                tooltipEl.innerHTML = "<table></table>";
+                document.body.appendChild(tooltipEl);
+
+                // intersecting circle
+                intersectingCircle = document.createElement("div");
+                intersectingCircle.id = "chartjs-tooltip-circle";
+                intersectingCircle.style.opacity = 1;
+                intersectingCircle.style.position = "absolute";
+                intersectingCircle.style.left =
+                  position.left +
+                  meta.data[tooltipIndex]?.x -
+                  (isDesktopView() ? 10 : 15) +
+                  "px";
+                intersectingCircle.style.top =
+                  position.top +
+                  window.scrollY +
+                  meta.data[tooltipIndex].y -
+                  10 +
+                  "px";
+                intersectingCircle.style.font = "inherit";
+                intersectingCircle.style.height = "20px";
+                intersectingCircle.style.width = "20px";
+                intersectingCircle.style.backgroundColor = "#226b8b";
+                intersectingCircle.style.borderColor = "#fff";
+                intersectingCircle.style.borderWidth = "2px";
+                intersectingCircle.style.borderStyle = "solid";
+                intersectingCircle.style.borderRadius = "50px";
+                intersectingCircle.style.zIndex = 1000;
+                intersectingCircle.style.pointerEvents = "none";
+                document.body.appendChild(intersectingCircle);
+              }
+
+              // Hide if no tooltip
+              const tooltipModel = tooltip;
+
+              if (tooltipModel.opacity === 0) {
+                tooltipEl.style.opacity = 1;
+                //return;
+              }
+
+              // Set caret Position
+              tooltipEl.classList.remove("above", "below", "no-transform");
+              if (tooltipModel.yAlign) {
+                tooltipEl.classList.add(tooltipModel.yAlign);
+              } else {
+                tooltipEl.classList.add("no-transform");
+              }
+
+              // Set Text
+
+              let innerHtml = "<thead>";
+
+              innerHtml += "</thead><tbody>";
+
+              let style = "background:" + "#fff";
+              style += "; color:" + "#000";
+              style += "; border-width: 0px";
+              const span =
+                '<span style="' +
+                style +
+                '">' +
+                meta._parsed[tooltipIndex].y +
+                " bn</span>";
+              innerHtml += "<tr><td>" + span + "</td></tr>";
+
+              innerHtml += "</tbody>";
+
+              let tableRoot = tooltipEl.querySelector("table");
+              tableRoot.innerHTML = innerHtml;
+
+              // Display, position, and set styles for font
+              tooltipEl.style.opacity = 1;
+              tooltipEl.style.position = "absolute";
+              tooltipEl.style.left =
+                position.left + meta.data[tooltipIndex]?.x + 22 + "px";
+              tooltipEl.style.top =
+                position.top +
+                window.scrollY +
+                meta.data[tooltipIndex]?.y -
+                20 +
+                "px";
+              tooltipEl.style.font = "inherit";
+              tooltipEl.style.padding = "5px";
+              tooltipEl.style.backgroundColor = "#fff";
+              tooltipEl.style.borderRadius = "5px";
+              tooltipEl.style.color = "#fefefe";
+              tooltipEl.style.zIndex = 1000;
+              tooltipEl.style.fontSize = "1rem";
+              tooltipEl.style.pointerEvents = "none";
+              // End show tooltip
+
+              // Begin drawing dashed lines
               ctx.beginPath();
-              ctx.lineWidth = 0.5;
+              ctx.lineWidth = 0.3;
               ctx.strokeStyle = "rgba(0,0,0,1)";
               ctx.setLineDash([10, 10]);
+              rect.x = canvasPositionX;
+              rect.y = tooltipsPositions[0]?.ty1 - position.bottom;
               ctx.moveTo(canvasPositionX, rect.y);
               ctx.lineTo(canvasPositionX, bottom);
               ctx.stroke();
               ctx.closePath();
               ctx.setLineDash([]);
+              // End drawing dashed lines
+
+              chartPainted = true;
             } else {
-              ctx.restore();
-              ctx.save();
+              if (
+                (canvasPositionX > rect.x + isDesktopView()
+                  ? 30
+                  : 25 || canvasPositionX < rect.x - isDesktopView()
+                  ? 30
+                  : 20) &&
+                chartPainted
+              ) {
+                // tooltip.setActiveElements([]);
+
+                showDummyLineChart();
+
+                // remove generated tooltip
+                document.querySelector("#chartjs-tooltip").remove();
+
+                document.querySelector("#chartjs-tooltip-circle").remove();
+
+                chart.update();
+
+                hideDummyLineChart();
+
+                chartPainted = false;
+                return;
+              }
             }
           },
           scales: {
@@ -195,6 +377,7 @@
               label: "",
               data: data.map((row) => row.num_users),
               borderColor: "#226b8b",
+              borderWidth: 5,
               backgroundColor: function (context) {
                 const chart = context.chart;
                 const { ctx, chartArea } = chart;
@@ -218,10 +401,10 @@
                 return gradient;
               },
               fill: true,
-              pointBackgroundColor: "none",
+              pointBackgroundColor: "transparent",
               pointBorderColor: "transparent",
               pointBorderWidth: 0,
-              pointRadius: 0,
+              pointRadius: 10,
               pointHoverBackgroundColor: "#fff",
               pointHoverBorderColor: "transparent",
               pointHoverBorderWidth: 0,
@@ -273,6 +456,8 @@
     const lastSectionContainer = document.querySelector(
       ".last-section-container"
     );
+
+    const lastSectionBgTwo = document.querySelector(".last-section__bg-two");
 
     const leftContainer = document.querySelector(".left-container");
 
@@ -370,10 +555,9 @@
         scoringFormula.classList.remove("fade-in");
 
         // // Change the background image of the last section container
-        lastSectionContainer.classList.remove("bg-img-1");
-        lastSectionContainer.classList.add("bg-img-2");
+        // lastSectionContainer.classList.add("opacity-0");
         firstOverlayContainer.classList.remove("simplify-fade-in");
-        lastSectionContainer.classList.add("show-bg-img-2");
+        lastSectionBgTwo.classList.add("show-bg-img-2");
       }
 
       if (paragraphTwo.getBoundingClientRect().y <= 10) {
@@ -431,6 +615,7 @@
         lastScrollTop < reverseScrollPosObj["scoringFormula"] &&
         lastScrollTop + window.innerHeight > reverseScrollPosObj["dataTable"]
       ) {
+        lastSectionBgTwo.classList.remove("show-bg-img-2");
         scoringFormula.classList.add("fade-in");
 
         satelliteImages.classList.remove("fade-in");
@@ -520,6 +705,8 @@
 
         leftContainer.style.overflowY = "scroll";
         leftContainer.style.overscrollBehavior = "contain";
+
+        firstOverlayContainer.classList.add("w-102vw");
 
         setupScrollListenerForLastSection();
       }
@@ -685,16 +872,14 @@
 
       // Fade section three into view
       if (window.innerHeight / 2 >= sectionThreeBg.getBoundingClientRect().y) {
-        sectionThreeBgOverlay.classList.add("fade-in");
-
-        // Makes section three parallax background visible
+        //sectionThreeBgOverlay.classList.add("fade-in");
 
         sectionThreeBg.classList.add("fade-in");
       }
 
       // show parallax for section three by removing overlay
       if (
-        secondParagraph.getBoundingClientRect().y <
+        secondParagraph.getBoundingClientRect().y - 100 <
         (window.innerHeight - secondParagraph.offsetHeight) / 2
       ) {
         sectionThreeBgOverlay.classList.remove("fade-in");
@@ -894,6 +1079,7 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          barThickness: isDesktopView() ? 60 : 22,
           plugins: {
             legend: {
               display: false,
@@ -980,7 +1166,7 @@
               ticks: {
                 stepSize: 5,
                 font: {
-                  size: remToPixel(isDesktopView() ? 1.11 : 0.55),
+                  size: remToPixel(isDesktopView() ? 1.11 : 0.9),
                 },
               },
               border: {
@@ -992,8 +1178,9 @@
                 display: false,
               },
               ticks: {
+                autoSkip: false,
                 font: {
-                  size: remToPixel(isDesktopView() ? 1.11 : 0.55),
+                  size: remToPixel(isDesktopView() ? 1.11 : 0.9),
                 },
               },
             },

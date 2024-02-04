@@ -27,10 +27,11 @@
       href="./assets/css/main.css"
       crossorigin="anonymous"
     />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="
 https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js
 "></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
     <title>WhiteShield</title>
   </head>
   <body class="w-100 d-flex flex-column align-items-center">
@@ -197,8 +198,13 @@ https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js
         >
           Number of users in billions
         </section>
-        <section class="first-section__chart-container">
-          <canvas id="meta-users"></canvas>
+        <section class="first-section__chart-container position-relative">
+          <canvas id="meta-users" class="z-2"></canvas>
+          <img
+            src=""
+            id="meta-users-dummy-chart"
+            class="opacity-0 w-100 position-absolute z-1"
+          />
         </section>
       </article>
 
@@ -217,7 +223,7 @@ https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js
       class="section-three-bg parallax position-relative w-100 d-flex flex-column align-items-center justify-content-between"
     >
       <section
-        class="section-three__bg-overlay position-absolute w-100 h-100"
+        class="section-three__bg-overlay fade-in position-absolute w-100 h-100"
       ></section>
       <p
         class="first-paragraph w-100 text-white d-flex justify-content-center mb-0 z-3"
@@ -338,7 +344,7 @@ https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js
 
         <!-- Shown on tablets -->
         <section
-          class="data-availability-text w-100 d-flex flex-column align-items-center"
+          class="data-availability-text w-100 d-flex flex-column align-items-start"
         >
           <p>
             > Data availability score of UAE is
@@ -390,7 +396,7 @@ https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js
               ></div>
               <!-- Container for rank counter -->
               <section
-                class="section-four__rank-counter w-100 position-absolute d-flex h-100 justify-content-center pt-5"
+                class="section-four__rank-counter w-100 position-absolute d-flex h-100 justify-content-center"
               >
                 <article
                   class="section-four__rank-counter-wrapper d-flex flex-column justify-content-center align-items-center position-relative"
@@ -552,6 +558,7 @@ https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js
     <!-- Section 6 -->
     <article class="last-section-container h-100 position-relative">
       <!-- Second background of the last parallax section -->
+
       <img
         src="/assets/images/last-section-bg-2.png"
         class="last-section__bg-two position-absolute w-100 h-100 opacity-0"

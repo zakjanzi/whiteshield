@@ -442,9 +442,8 @@ body {
     width: max-content !important;
     height: max-content !important;
     padding: 2% !important;
-    font-size: 1rem !important;
+    font-size: 0.7rem !important;
     top: 0% !important;
-    left: 8% !important;
   }
 
   .section-four__rank-counter-text {
@@ -515,9 +514,14 @@ body {
     height: 8.6rem !important;
   }
 
+  .w-104vw {
+    width: 106% !important;
+  }
+
   .left-container {
     padding-left: 1.5rem;
     padding-right: 1.5rem;
+    position: absolute;
   }
 
   .right-container * {
@@ -581,7 +585,7 @@ body {
 
 .section-four__header-two {
   height: 7.22rem /* 115.52px */;
-  margin-top: 9rem /* 144px */;
+  margin-top: 1.5rem;
 }
 
 .section-four__header-2 {
@@ -631,7 +635,9 @@ body {
 }
 
 .section-four__rank-counter {
-  top: 0.65rem /* 10.4px */;
+  /* top: 0.65rem 10.4px; */
+  align-items: center;
+  left: 20px;
 }
 
 .section-four__rank-counter-wrapper {
@@ -642,7 +648,7 @@ body {
   right: 10.4%; */
   z-index: 20;
   border-radius: 0.5rem /* 8px */;
-  margin-top: calc(50% - 7rem);
+  margin-top: -15%;
 }
 
 .section-four__rank-counter-text {
@@ -835,17 +841,12 @@ body {
     background-image: url("/assets/images/last-section-bg-1.png");
   }
 
-  .bg-img-2 {
-    background-image: url("/assets/images/last-section-bg-2.png") !important;
-    opacity: 0;
-  }
-
   .first-overlay-container {
     flex-direction: row;
     justify-content: space-between;
     z-index: 30;
     max-height: 100vh;
-    width: 110vw !important;
+    width: 100vw;
     z-index: 30;
   }
 
@@ -1143,6 +1144,10 @@ body {
   transition: opacity 1s;
 }
 
+.w-102vw {
+  width: 102vw !important;
+}
+
 /* Table styles */
 .tg {
   border: none;
@@ -1224,7 +1229,7 @@ body {
   .first-section__chart-container {
     /* height: 22.25rem !important; */
     margin: 1.25rem 0rem;
-    width: 300px !important;
+    width: 340px !important;
     height: 356px;
   }
 
@@ -1279,7 +1284,7 @@ body {
   }
 
   .section-four__chart-title {
-    width: 40%;
+    width: 30%;
     font-size: 0.7rem;
   }
 
@@ -1374,14 +1379,23 @@ body {
   }
 
   .fade-in-footer-bg-two {
-    animation: fadeInFooterAnimation ease 2s;
+    animation: fadeInAnimationNormal ease 2s;
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
   }
 
-  @keyframes fadeInFooterAnimation {
+  .fade-in-normal {
+    animation: fadeInAnimationNormal ease 2s;
+    animation-iteration-count: 1;
+    animation-fill-mode: both;
+  }
+
+  @keyframes fadeInAnimationNormal {
     0% {
       opacity: 0;
+    }
+    50% {
+      opacity: 0.5;
     }
     100% {
       opacity: 1;
