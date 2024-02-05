@@ -28,7 +28,8 @@ body {
 /* Navbar */
 .navbar {
   background-color: var(--dark-teal-500);
-  z-index: 20;
+  z-index: 2000;
+  position: fixed;
 }
 
 .navbar-brand {
@@ -175,7 +176,7 @@ body {
   background-size: contain;
   background-repeat: no-repeat;
   z-index: 20;
-  height: calc(100vh - 90px);
+  height: 100vh;
 }
 
 .hero-section__text-1 {
@@ -1114,7 +1115,7 @@ body {
 }
 
 .hero-parallax {
-  height: calc(100vh - 94px) !important;
+  height: 100vh !important;
 }
 
 .fade-bg {
