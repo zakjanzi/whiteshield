@@ -60,13 +60,15 @@
     let firstOverlayContainer;
 
     if (!isDesktopView()) {
-      document.querySelector(".first-overlay-container").remove();
+      // document
+      // .querySelector(".last-section-container > article:nth-child(2)")
+      // .remove();
       firstOverlayContainer = document.querySelector(
-        ".first-overlay-container"
+        ".last-section-container > section:nth-child(4)"
       );
     } else {
       firstOverlayContainer = document.querySelector(
-        ".first-overlay-container"
+        ".last-section-container > article:nth-child(2)"
       );
     }
 
@@ -75,9 +77,21 @@
       ".last-section-container"
     );
 
-    const lastSectionBgTwo = document.querySelector(".last-section__bg-two");
+    const lastSectionBgTwo = document.querySelector(
+      ".last-section-container > img:nth-child(1)"
+    );
 
-    const leftContainer = document.querySelector(".left-container");
+    let leftContainer;
+
+    if (isDesktopView()) {
+      leftContainer = document.querySelector(
+        ".last-section-container > article:nth-child(2) > section:nth-child(1)"
+      );
+    } else {
+      leftContainer = document.querySelector(
+        ".last-section-container > section:nth-child(4) > section:nth-child(1)"
+      );
+    }
 
     // These settings prevent the left container from being scrollable until the base of the page is reached
     // leftContainer.style.overflowY = "hidden";
@@ -85,16 +99,35 @@
     // End settings setup
 
     const leftContainerContent = isMobileView()
-      ? document.querySelector(".left-container-content.mobile")
-      : document.querySelector(".left-container-content");
-    const simplifyText = document.querySelector(".simplify-text");
-    const satelliteImages = document.querySelector(".satellite-images");
-    const paragraphTwo = document.querySelector(".paragraph-two");
-    const dataTable = document.querySelector(".data-table");
-    const scoringFormula = document.querySelector(".scoring-formula-container");
-    const paragraphThree = document.querySelector(".paragraph-three");
+      ? document.querySelector(
+          ".last-section-container > section:nth-child(4) > section:nth-child(1) > article:nth-child(1)"
+        )
+      : document.querySelector(
+          ".last-section-container > article:nth-child(2) > section:nth-child(1) > article:nth-child(1)"
+        );
 
-    const footerBgTwoMobile = document.querySelector(".footer-bg-two-mobile");
+    const simplifyText = document.querySelector(
+      ".last-section-container > article:nth-child(2) > section:nth-child(1) > article:nth-child(1) > section:nth-child(1)"
+    );
+    const satelliteImages = document.querySelector(
+      ".last-section-container > article:nth-child(2) > section:nth-child(2) > section:nth-child(1)"
+    );
+    const paragraphTwo = document.querySelector(
+      ".last-section-container > article:nth-child(2) > section:nth-child(1) > article:nth-child(1) > section:nth-child(2)"
+    );
+    const dataTable = document.querySelector(
+      ".last-section-container > article:nth-child(2) > section:nth-child(2) > section:nth-child(2)"
+    );
+    const scoringFormula = document.querySelector(
+      ".last-section-container > article:nth-child(2) > section:nth-child(2) > section:nth-child(3)"
+    );
+    const paragraphThree = document.querySelector(
+      ".last-section-container > article:nth-child(2) > section:nth-child(1) > article:nth-child(1) > section:nth-child(3)"
+    );
+
+    const footerBgTwoMobile = document.querySelector(
+      ".last-section-container > img:nth-child(3)"
+    );
     const paragraphThreeMobile = document.querySelector(
       ".paragraph-three-mobile"
     );
@@ -344,6 +377,7 @@
 
       // Condition required to show first overlay container
       if (leftContainerContent.getBoundingClientRect().y < innerHeight / 3) {
+        console.log("here");
         firstOverlayContainer.classList.add("simplify-fade-in");
       }
 
