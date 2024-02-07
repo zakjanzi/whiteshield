@@ -99,16 +99,17 @@
     // End settings setup
 
     const leftContainerContent = isMobileView()
-      ? document.querySelector(
-          ".last-section-container > section:nth-child(4) > section:nth-child(1) > article:nth-child(1)"
-        )
+      ? leftContainer.querySelector("article:nth-child(1)")
       : document.querySelector(
           ".last-section-container > article:nth-child(2) > section:nth-child(1) > article:nth-child(1)"
         );
 
-    const simplifyText = document.querySelector(
-      ".last-section-container > article:nth-child(2) > section:nth-child(1) > article:nth-child(1) > section:nth-child(1)"
-    );
+    const simplifyText = isMobileView()
+      ? leftContainerContent.querySelector("section:nth-child(1)")
+      : document.querySelector(
+          ".last-section-container > article:nth-child(2) > section:nth-child(1) > article:nth-child(1) > section:nth-child(1)"
+        );
+
     const satelliteImages = document.querySelector(
       ".last-section-container > article:nth-child(2) > section:nth-child(2) > section:nth-child(1)"
     );
@@ -363,45 +364,111 @@
       }
     };
 
+    function getPageFullHeight() {
+      var pageHeight = 0;
+
+      function findHighestNode(nodesList) {
+        for (var i = nodesList.length - 1; i >= 0; i--) {
+          if (nodesList[i].scrollHeight && nodesList[i].clientHeight) {
+            var elHeight = Math.max(
+              nodesList[i].scrollHeight,
+              nodesList[i].clientHeight
+            );
+            pageHeight = Math.max(elHeight, pageHeight);
+          }
+          if (nodesList[i].childNodes.length)
+            findHighestNode(nodesList[i].childNodes);
+        }
+      }
+
+      findHighestNode(document.documentElement.childNodes);
+      // The entire page height is found
+      // console.log("Page height is", pageHeight);
+
+      return pageHeight;
+    }
+
+    const endOfLastSectionParallaxReached = () => {
+      return (
+        window.scrollY === lastSectionContainer.offsetTop &&
+        lastSectionContainer.offsetHeight + lastSectionContainer.offsetTop ===
+          getPageFullHeight()
+      );
+    };
+
     let initialPos = Math.abs(
       leftContainerContent.getBoundingClientRect().y -
         window.scrollY +
         innerHeight
     );
 
-    const lastSectionMobileScrollHandler = () => {
-      let currentPos =
-        leftContainerContent.getBoundingClientRect().y +
-        innerHeight +
-        initialPos;
+    const enableBodyScroll = () => {
+      document.body.style.height = "initial";
+      document.body.style.overflowY = "scroll";
+    };
+
+    const disableBodyScroll = () => {
+      // Add a scroll event listener to the body
+      // document.body.addEventListener("scroll", function (event) {
+      //   // Prevent the default scroll behavior
+      //   event.preventDefault();
+      //   // Optionally, you can also prevent propagation
+      //   event.stopPropagation();
+      //   // Log a message or perform any other action if needed
+      //   // console.log("Scrolling on body is disabled");
+      // });
+    };
+
+    let simplifyTextInitPosDiff;
+    let lastParagraphViewed = false;
+
+    const lastSectionMobileScrollHandler = (e) => {
+      if (!simplifyTextInitPosDiff)
+        simplifyTextInitPosDiff =
+          simplifyText.getBoundingClientRect().y - simplifyText.offsetTop;
+
+      console.log(
+        window.innerHeight -
+          (paragraphThreeMobile.getBoundingClientRect().y +
+            paragraphThreeMobile.offsetHeight)
+      );
 
       // Condition required to show first overlay container
       if (leftContainerContent.getBoundingClientRect().y < innerHeight / 3) {
-        console.log("here");
         firstOverlayContainer.classList.add("simplify-fade-in");
       }
 
-      if (currentPos >= window.scrollY && lastSectionParallaxActive) {
+      if (
+        simplifyText.getBoundingClientRect().y - simplifyText.offsetTop >
+          simplifyTextInitPosDiff &&
+        lastSectionParallaxActive
+      ) {
         firstOverlayContainer.classList.remove("simplify-fade-in");
 
         lastSectionParallaxActive = false;
 
-        leftContainer.style.overflowY = "clip";
+        leftContainer.style.overflowY = "hidden";
         leftContainer.style.height = "100%";
         leftContainer.style.overscrollBehavior = "initial";
+
+        // Enable body scroll
+        lastSectionContainer.classList.remove("pin-section");
 
         leftContainer.removeEventListener(
           "scroll",
           lastSectionMobileScrollHandler
         );
 
-        window.scrollTo(0, window.scrollY - 20);
+        enableBodyScroll();
+
+        window.scrollTo(0, window.scrollY - 10);
       }
 
       if (
         scoringFormula.getBoundingClientRect().y <=
           innerHeight - scoringFormula.offsetHeight &&
-        paragraphThreeMobile.getBoundingClientRect().y <= innerHeight
+        paragraphThreeMobile.getBoundingClientRect().y <= innerHeight &&
+        !lastParagraphViewed
       ) {
         // handle the background fade in after scoring formula section
         paragraphThreeMobile.style.marginBottom =
@@ -421,28 +488,68 @@
         paragraphThreeMobile.getBoundingClientRect().y <
         window.innerHeight - window.innerHeight * 0.6
       ) {
-        firstOverlayContainer.classList.add("simplify-fade-in");
+        if (!firstOverlayContainer.classList.contains("simplify-fade-in")) {
+          firstOverlayContainer.classList.add("simplify-fade-in");
+          // Enable body scroll
+          lastSectionContainer.classList.remove("pin-section");
+          lastParagraphViewed = true;
+        }
 
         // firstOverlayContainer.classList.add("fade-in-important");
       }
+
+      // Monitors scrollend of the last section parallax
+      if (
+        lastParagraphViewed &&
+        Math.round(
+          window.innerHeight -
+            (paragraphThreeMobile.getBoundingClientRect().y +
+              paragraphThreeMobile.offsetHeight)
+        ) === +paragraphThreeMobile.style.marginBottom.slice(0, 3)
+      ) {
+        // Enable body scroll
+        lastSectionContainer.classList.remove("pin-section");
+
+        console.log("removing");
+        // Scroll down to the main footer a little
+        // window.scrollBy(0, scrollY + innerHeight * 2);
+      }
     };
+
+    const pinLastSectionParallax = (entries) => {
+      // console.log("attaching");
+      entries.forEach((entry) => {
+        entry.target.classList.add("pin-section");
+        console.log(entries.length);
+      });
+      lastSectionParallaxActive = true;
+
+      lastSectionContainer.scroll({
+        top: 0,
+        behavior: "smooth",
+      });
+
+      lastSectionContainer.classList.add("pin-section");
+
+      leftContainer.style.overflowY = "scroll";
+      leftContainer.style.height = "100vh";
+      leftContainer.style.overscrollBehavior = "contain";
+
+      leftContainer.addEventListener("scroll", lastSectionMobileScrollHandler);
+    };
+
+    let dubaiChart = document.querySelector("#dubai-dataset-chart");
+    let dubaiChartPos = dubaiChart.offsetTop + dubaiChart.offsetHeight;
+
+    // This intersection observer is used to monitor the last section parallax
+    const observer = new IntersectionObserver(pinLastSectionParallax, {
+      rootMargin: "-100px",
+      root: document.querySelector("body"),
+    });
+    observer.observe(lastSectionContainer);
 
     window.addEventListener("scroll", (e) => {
       showAnimatedChart();
-
-      // handle mobile view on scroll
-      if (isMobileView() && endOfPageReached() && !lastSectionParallaxActive) {
-        lastSectionParallaxActive = true;
-
-        leftContainer.style.overflowY = "scroll";
-        leftContainer.style.height = "inherit";
-        leftContainer.style.overscrollBehavior = "contain";
-
-        leftContainer.addEventListener(
-          "scroll",
-          lastSectionMobileScrollHandler
-        );
-      }
 
       // For last section of the page
       if (!lastSectionParallaxActive && isDesktopView()) {

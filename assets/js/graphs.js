@@ -117,7 +117,7 @@ const allChartsDrawn = () => {
 // Set font for Chartjs
 Chart.defaults.font.family = "Montserrat";
 
-// Line chart setup. For the first graph on the page
+// Line chart setup. (graph 1)
 const drawLineChart = () => {
   const data = [
     { num_users: 3.5, quarter: "" },
@@ -175,6 +175,7 @@ const drawLineChart = () => {
   let lineChart = new Chart(document.getElementById("meta-users"), {
     type: "line",
 
+    // config section
     options: {
       responsive: true,
       maintainAspectRatio: false,
@@ -383,6 +384,7 @@ const drawLineChart = () => {
       animation,
     },
     data: {
+      // config section
       labels: data.map((row) => row.quarter),
       datasets: [
         {
@@ -427,7 +429,7 @@ const drawLineChart = () => {
 };
 // End line chart setup. This is for the first chart
 
-// Open Data Barometer charts/graph setup
+// Open Data Barometer charts/graph setup. (graph 2))
 const drawHorizontalBarChart = () => {
   const animateValuePosition = (overlay, widthValue) => {
     let pixelsDeducted = 0;
@@ -475,6 +477,7 @@ const drawHorizontalBarChart = () => {
     const chart = new Chart(document.getElementById(horizontalBarChart.id), {
       type: "bar",
       options: {
+        // config section
         indexAxis: "y",
         responsive: true,
         maintainAspectRatio: false,
@@ -515,6 +518,7 @@ const drawHorizontalBarChart = () => {
         },
       },
       data: {
+        // config section
         labels: [horizontalBarChart.id.toUpperCase().replace("-", " ")],
         datasets: [
           {
@@ -533,7 +537,7 @@ const drawHorizontalBarChart = () => {
   });
 };
 
-// Business Data transparency Index charts setup, first graph
+// Business Data transparency Index charts setup, (graph 3)
 const drawBusinessBarChartOne = () => {
   const chartOneData = [
     { id: "Estonia", length: 95 },
@@ -544,6 +548,7 @@ const drawBusinessBarChartOne = () => {
   new Chart(document.getElementById("business-chart-one"), {
     type: "bar",
     options: {
+      // config section
       responsive: true,
       maintainAspectRatio: false,
       barThickness: isDesktopView() ? 60 : 22,
@@ -580,6 +585,7 @@ const drawBusinessBarChartOne = () => {
       },
     },
     data: {
+      // config section
       labels: isDesktopView()
         ? ["Estonia", "Latvia", "Sweden"]
         : ["EST", "LVA", "SWE"],
@@ -593,7 +599,7 @@ const drawBusinessBarChartOne = () => {
   });
 };
 
-// Business Data transparency second graph
+// Business Data transparency second graph, (graph 4).
 const drawBusinessBarChartTwo = () => {
   const chartTwoData = [
     { country: "UAE", length: 22 },
@@ -604,6 +610,7 @@ const drawBusinessBarChartTwo = () => {
   new Chart(document.getElementById("business-chart-two"), {
     type: "bar",
     options: {
+      // config section
       responsive: true,
       maintainAspectRatio: false,
       barThickness: isDesktopView() ? 60 : 22,
@@ -637,6 +644,7 @@ const drawBusinessBarChartTwo = () => {
       },
     },
     data: {
+      // config section
       labels: chartTwoData.map((item) => item.country),
       datasets: [
         {
@@ -648,7 +656,7 @@ const drawBusinessBarChartTwo = () => {
   });
 };
 
-// UAE rank counter
+// UAE rank counter. Placed over graph 4
 const doRankCounter = () => {
   let counts = setInterval(UAERankCounter);
   let upto = 0;
@@ -669,6 +677,7 @@ const doRankCounter = () => {
 // Please note the following
 // The first elements list of values correlate with that of the second elements of the dubaiDataset
 // So 7 correlates with 9, and 24 correlates with 10.5.
+// graph 5
 const drawDubaiDatasetChart = () => {
   const dubaiDataset = [
     {
@@ -684,6 +693,7 @@ const drawDubaiDatasetChart = () => {
   new Chart(document.getElementById("dubai-dataset-chart"), {
     type: "bar",
     options: {
+      // config section
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
@@ -719,6 +729,7 @@ const drawDubaiDatasetChart = () => {
       },
     },
     data: {
+      // config section
       labels: ["Building", "Land", "Road", "Vegetation", "Water"],
       datasets: dubaiDataset.map((singleDataset) => {
         return {
