@@ -116,21 +116,36 @@
     const paragraphTwo = document.querySelector(
       ".last-section-container > article:nth-child(2) > section:nth-child(1) > article:nth-child(1) > section:nth-child(2)"
     );
-    const dataTable = document.querySelector(
-      ".last-section-container > article:nth-child(2) > section:nth-child(2) > section:nth-child(2)"
-    );
-    const scoringFormula = document.querySelector(
-      ".last-section-container > article:nth-child(2) > section:nth-child(2) > section:nth-child(3)"
-    );
-    const paragraphThree = document.querySelector(
-      ".last-section-container > article:nth-child(2) > section:nth-child(1) > article:nth-child(1) > section:nth-child(3)"
-    );
+
+    const dataTable = isDesktopView()
+      ? document.querySelector(
+          ".last-section-container > article:nth-child(2) > section:nth-child(2) > section:nth-child(2)"
+        )
+      : leftContainerContent.querySelector(
+          "section:nth-child(1) > section:nth-child(5)"
+        );
+
+    const scoringFormula = isDesktopView()
+      ? document.querySelector(
+          ".last-section-container > article:nth-child(2) > section:nth-child(2) > section:nth-child(3)"
+        )
+      : leftContainerContent.querySelector(
+          "section:nth-child(1) > section:nth-child(6) > section:nth-child(2)"
+        );
+
+    const paragraphThree = isDesktopView()
+      ? document.querySelector(
+          ".last-section-container > article:nth-child(2) > section:nth-child(1) > article:nth-child(1) > section:nth-child(3)"
+        )
+      : leftContainerContent.querySelector(
+          "section:nth-child(1) > section:nth-child(7)"
+        );
 
     const footerBgTwoMobile = document.querySelector(
       ".last-section-container > img:nth-child(3)"
     );
-    const paragraphThreeMobile = document.querySelector(
-      ".paragraph-three-mobile"
+    const paragraphThreeMobile = leftContainerContent.querySelector(
+      "section:nth-child(1) > section:nth-child(7)"
     );
 
     let lastSectionParallaxActive = false;
@@ -187,13 +202,112 @@
       }
     };
 
+    const disableParallaxScrolling = () => {
+      leftContainer.style.overflowY = "hidden";
+      leftContainer.style.height = "100%";
+    };
+
+    const enableParallaxScrolling = () => {
+      leftContainer.style.overflowY = "scroll";
+    };
+
+    const disableBodyScroll = () => {
+      document.body.style.height = "100vh";
+      document.body.style.overflowY = "hidden";
+    };
+
+    // Start parallax footer line top
+    let init = false;
+    const parallaxStartReached = (entries) => {
+      if (!init) {
+        init = true;
+        return;
+      }
+      //console.log("pstart:", simplifyText.getBoundingClientRect().y);
+      console.log(entries);
+      return;
+      if (
+        entry.isIntersecting &&
+        entry.intersectionRatio === 1 &&
+        pThreeObserver.intersectionRatio === 1
+      ) {
+        lastSectionContainer.nextElementSibling.classList.add("d-none");
+        //console.log("Element is visible!");
+        // disableBodyScroll();
+        enableParallaxScrolling();
+        // left viewport at the top edge, hence scroll direction is down
+      } else {
+        //console.log("Element is not visible!");
+        disableParallaxScrolling();
+        // observerParallaxFooterTop.unobserve(parallaxFooterTop);
+      }
+    };
+
+    // This intersection observer is used to monitor the top of last section parallax
+    const observerParallaxFooterTop = new IntersectionObserver(
+      parallaxStartReached,
+      {
+        // root: document.querySelector("body"),
+        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
+      }
+    );
+
+    //observerParallaxFooterTop.observe(lastSectionContainer);
+    //observerParallaxFooterTop.observe(paragraphThree);
+
+    // end parallax footer top
+    const footerHidden = () => {
+      return lastSectionContainer.nextElementSibling.classList.contains(
+        "d-none"
+      );
+    };
+
+    let initialPageLoad = true;
+    const parallaxEndReached = ([entry]) => {
+      if (initialPageLoad === true) {
+        initialPageLoad = false;
+        return;
+      }
+
+      console.log("showing footer", entry, footerHidden());
+      if (entry.intersectionRatio === 1 && footerHidden()) {
+        // This shows the main footer
+        lastSectionContainer.nextElementSibling.classList.remove("d-none");
+
+        // Brings the top portion of the footer into view
+        scrollBy(0, 50);
+
+        // Disable scroll on last section parallax
+        disableParallaxScrolling();
+      }
+    };
+
+    // This intersection observer is used to monitor the end reached of last section parallax
+    const observerLeftContainerEndLine = new IntersectionObserver(
+      parallaxEndReached,
+      {
+        // root: leftContainer,
+        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
+      }
+    );
+
+    const parallaxFooterEndLine = document.querySelector(
+      "#parallax-footer-line"
+    );
+
+    // observerLeftContainerEndLine.observe(paragraphThree);
+    // End parallax footer end line
+
+    let pThreeMarginBottom = (innerHeight - paragraphThree.offsetHeight) / 2;
+
     const showOrHideDataTable = (e) => {
       if (
         paragraphThree.getBoundingClientRect().y <= window.innerHeight - 150 &&
         displayedPThree.state
       ) {
-        paragraphThree.style.marginBottom =
-          (window.innerHeight - paragraphThree.offsetHeight) / 2 + "px";
+        pThreeMarginBottom =
+          (window.innerHeight - paragraphThree.offsetHeight) / 2;
+        paragraphThree.style.marginBottom = pThreeMarginBottom + "px";
 
         firstOverlayContainer.classList.add("simplify-fade-in");
       }
@@ -340,7 +454,9 @@
 
           leftContainer.removeEventListener("scroll", handler);
 
-          window.scrollTo(window.scrollX, window.scrollY - 10);
+          //lastSectionContainer.classList.remove("pin-section");
+
+          //window.scrollTo(window.scrollX, window.scrollY);
         }
 
         showOrHideSatelliteImages(e);
@@ -352,10 +468,14 @@
     };
 
     const handleLastSectionParallax = () => {
-      if (endOfPageReached() && !lastSectionParallaxActive) {
+      // Hide the footer completely
+      lastSectionContainer.nextElementSibling.classList.add("d-none");
+
+      if (endOfLastSectionParallaxReached() && !lastSectionParallaxActive) {
         lastSectionParallaxActive = true;
 
         leftContainer.style.overflowY = "scroll";
+        lastSectionContainer.style.overflowX = "clip";
         leftContainer.style.overscrollBehavior = "contain";
 
         firstOverlayContainer.classList.add("w-102vw");
@@ -390,9 +510,9 @@
 
     const endOfLastSectionParallaxReached = () => {
       return (
-        window.scrollY === lastSectionContainer.offsetTop &&
-        lastSectionContainer.offsetHeight + lastSectionContainer.offsetTop ===
-          getPageFullHeight()
+        // window.scrollY === lastSectionContainer.offsetTop &&
+        lastSectionContainer.offsetHeight + lastSectionContainer.offsetTop >=
+        getPageFullHeight() - document.querySelector("footer").offsetHeight
       );
     };
 
@@ -407,18 +527,6 @@
       document.body.style.overflowY = "scroll";
     };
 
-    const disableBodyScroll = () => {
-      // Add a scroll event listener to the body
-      // document.body.addEventListener("scroll", function (event) {
-      //   // Prevent the default scroll behavior
-      //   event.preventDefault();
-      //   // Optionally, you can also prevent propagation
-      //   event.stopPropagation();
-      //   // Log a message or perform any other action if needed
-      //   // console.log("Scrolling on body is disabled");
-      // });
-    };
-
     let simplifyTextInitPosDiff;
     let lastParagraphViewed = false;
 
@@ -426,12 +534,6 @@
       if (!simplifyTextInitPosDiff)
         simplifyTextInitPosDiff =
           simplifyText.getBoundingClientRect().y - simplifyText.offsetTop;
-
-      console.log(
-        window.innerHeight -
-          (paragraphThreeMobile.getBoundingClientRect().y +
-            paragraphThreeMobile.offsetHeight)
-      );
 
       // Condition required to show first overlay container
       if (leftContainerContent.getBoundingClientRect().y < innerHeight / 3) {
@@ -459,9 +561,9 @@
           lastSectionMobileScrollHandler
         );
 
-        enableBodyScroll();
+        // enableBodyScroll();
 
-        window.scrollTo(0, window.scrollY - 10);
+        // window.scrollTo(0, window.scrollY - 10);
       }
 
       if (
@@ -491,7 +593,7 @@
         if (!firstOverlayContainer.classList.contains("simplify-fade-in")) {
           firstOverlayContainer.classList.add("simplify-fade-in");
           // Enable body scroll
-          lastSectionContainer.classList.remove("pin-section");
+          //lastSectionContainer.classList.remove("pin-section");
           lastParagraphViewed = true;
         }
 
@@ -508,54 +610,105 @@
         ) === +paragraphThreeMobile.style.marginBottom.slice(0, 3)
       ) {
         // Enable body scroll
-        lastSectionContainer.classList.remove("pin-section");
-
-        console.log("removing");
+        // lastSectionContainer.classList.remove("pin-section");
         // Scroll down to the main footer a little
-        // window.scrollBy(0, scrollY + innerHeight * 2);
+        //window.scrollBy(0, scrollY + innerHeight * 2);
       }
     };
 
+    initialPageLoad = true;
     const pinLastSectionParallax = (entries) => {
-      // console.log("attaching");
-      entries.forEach((entry) => {
-        entry.target.classList.add("pin-section");
-        console.log(entries.length);
-      });
-      lastSectionParallaxActive = true;
+      console.log("attaching");
+      console.log(entries);
 
-      lastSectionContainer.scroll({
-        top: 0,
-        behavior: "smooth",
-      });
+      if (initialPageLoad) {
+        initialPageLoad = false;
+        return;
+      }
 
-      lastSectionContainer.classList.add("pin-section");
+      // Return if every handler is registered
+      if (initialPageLoad === false) {
+      } else {
+        return;
+      }
 
-      leftContainer.style.overflowY = "scroll";
-      leftContainer.style.height = "100vh";
-      leftContainer.style.overscrollBehavior = "contain";
+      if (
+        entries[0].intersectionRatio > 0.9 &&
+        entries[0].intersectionRatio <= 1 &&
+        !lastSectionParallaxActive
+      ) {
+        lastSectionContainer.scroll({
+          top: 0,
+          behavior: "smooth",
+        });
 
-      leftContainer.addEventListener("scroll", lastSectionMobileScrollHandler);
+        console.log("called observing p3");
+        observer.observe(paragraphThree);
+
+        lastSectionContainer.classList.add("bg-attach-fixed");
+
+        leftContainer.style.overflowY = "scroll";
+        leftContainer.style.height = "100%";
+        leftContainer.style.overscrollBehavior = "contain";
+
+        if (isMobileView()) {
+          leftContainer.addEventListener(
+            "scroll",
+            lastSectionMobileScrollHandler
+          );
+        } else {
+          console.log("called");
+          handleLastSectionParallax();
+        }
+      }
+
+      // Check pThree position
+      if (entries[0].intersectionRatio === 1 && footerHidden()) {
+        lastSectionContainer.classList.remove("bg-attach-fixed");
+
+        // This shows the main footer
+        lastSectionContainer.nextElementSibling.classList.remove("d-none");
+        // Brings the top portion of the footer into view
+        scrollBy(0, 50);
+        // Disable scroll on last section parallax
+        disableParallaxScrolling();
+      }
+
+      // Reverse scroll handler
+      // if (
+      //   !footerHidden() &&
+      //   entries[0].isIntersecting &&
+      //   entries[0].intersectionRatio === 1 &&
+      //   entries[1].intersectionRatio === 1
+      // ) {
+      //   // Hide the footer completely
+      //   lastSectionContainer.nextElementSibling.classList.add("d-none");
+      //   //console.log("Element is visible!");
+      //   // disableBodyScroll();
+      //   enableParallaxScrolling();
+      //   // left viewport at the top edge, hence scroll direction is down
+      // } else {
+      //   //console.log("Element is not visible!");
+      //   //disableParallaxScrolling();
+      //   // observerParallaxFooterTop.unobserve(parallaxFooterTop);
+      // }
     };
+
+    // This intersection observer is used to monitor the last section parallax
+    const observer = new IntersectionObserver(pinLastSectionParallax, {
+      // rootMargin: "1px",
+      // root: document.querySelector("body"),
+      threshold: [0.9, 1],
+    });
+
+    observer.observe(lastSectionContainer);
+    observer.observe(paragraphThree);
 
     let dubaiChart = document.querySelector("#dubai-dataset-chart");
     let dubaiChartPos = dubaiChart.offsetTop + dubaiChart.offsetHeight;
 
-    // This intersection observer is used to monitor the last section parallax
-    const observer = new IntersectionObserver(pinLastSectionParallax, {
-      rootMargin: "-100px",
-      root: document.querySelector("body"),
-    });
-    observer.observe(lastSectionContainer);
-
     window.addEventListener("scroll", (e) => {
       showAnimatedChart();
-
-      // For last section of the page
-      if (!lastSectionParallaxActive && isDesktopView()) {
-        handleLastSectionParallax();
-      }
-      // End for last section of the page
 
       // Fade section three into view
       if (window.innerHeight / 2 >= sectionThreeBg.getBoundingClientRect().y) {
@@ -573,6 +726,6 @@
       }
     });
 
-    document.body.style.width = window.innerWidth;
+    // document.body.style.width = window.innerWidth;
   });
 })();

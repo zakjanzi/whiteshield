@@ -491,10 +491,9 @@ https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js
       </article>
     </section>
 
-    <!-- This overlay is used to prevent scrolling on the body of the web page -->
-    <div id="last-section-overlay" style="position:absolute; top:0; height:100vh; width:100vw; "></div>
-    <!-- Section 6 -->
-    <article class="last-section-container h-100 position-relative">
+
+   <!-- Section 6 -->
+    <article class="last-section-container position-relative">
       <!-- Second background of the last parallax section -->
 
       <img
@@ -502,12 +501,13 @@ https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js
         class="position-absolute w-100 h-100 opacity-0"
       />
       <article
-        class="row w-100 position-relative d-none d-md-flex"
+        class="row w-100 h-100 position-relative d-none d-md-flex"
       >
         <!-- Left container -->
         <section
           class="col-12 hide-scrollbar d-none d-md-block"
         >
+        
           <article
             class="position-relative w-100 h-auto"
           >
@@ -565,6 +565,7 @@ https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js
             </section>
             <!-- End Paragraph three -->
           </article>
+          
         </section>
         <!-- End left container -->
 
@@ -677,7 +678,7 @@ https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js
       <!-- This section is displayed for mobile view only -->
       <img
         src="/assets/images/last-section-bg-2-mobile.png"
-        class="position-absolute w-100 h-100"
+        class="position-absolute w-100 h-100 d-md-none d-block"
       />
       <section
         class="row position-relative d-flex d-md-none"
@@ -805,12 +806,12 @@ https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js
 
               <!-- Scoring Formula -->
               <section
-                class="scoring-formula-container d-flex flex-column justify-content-center position-relative"
+                class="d-flex flex-column justify-content-center position-relative"
               >
                 <h4 class="text-white">
                   The scoring formula is defined with weights
                 </h4>
-                <section class="scoring-formula w-100">
+                <section class="w-100">
                   <p>Agriculture intensity =</p>
                   <p>w1 (40%) x Crops Score</p>
                   <p>+ w2 (40%) x Built-up Area Score</p>
@@ -821,7 +822,7 @@ https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js
 
               <!-- Paragraph three -->
               <section
-                class="paragraph-three-mobile text-white position-relative"
+                class="text-white position-relative"
               >
                 <p>
                   Continued research suggests an optimistic future where AI,
@@ -855,9 +856,12 @@ https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js
     </article>
     <!-- End section 6 -->
 
+    <!-- This is used to monitor end of above section -->
+    <!-- <hr id="parallax-footer-line" class="bg-white w-100 my-0" style="height:1px; visibility:hidden;"/> -->
+
     <!-- Footer for testing purposes -->
     <footer style="width: 100%; height: 300px;">
-
+      <h2> Demo footer for testing purposes</h2>
     </footer>
 
     <script src="/assets/js/graphs.js"></script>
