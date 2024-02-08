@@ -224,7 +224,7 @@
         return;
       }
       //console.log("pstart:", simplifyText.getBoundingClientRect().y);
-      console.log(entries);
+
       return;
       if (
         entry.isIntersecting &&
@@ -269,7 +269,6 @@
         return;
       }
 
-      console.log("showing footer", entry, footerHidden());
       if (entry.intersectionRatio === 1 && footerHidden()) {
         // This shows the main footer
         lastSectionContainer.nextElementSibling.classList.remove("d-none");
@@ -456,7 +455,7 @@
 
           //lastSectionContainer.classList.remove("pin-section");
 
-          //window.scrollTo(window.scrollX, window.scrollY);
+          window.scrollTo(window.scrollX, window.scrollY - innerHeight);
         }
 
         showOrHideSatelliteImages(e);
@@ -512,7 +511,7 @@
       return (
         // window.scrollY === lastSectionContainer.offsetTop &&
         lastSectionContainer.offsetHeight + lastSectionContainer.offsetTop >=
-        getPageFullHeight() - document.querySelector("footer").offsetHeight
+        getPageFullHeight()
       );
     };
 
@@ -618,61 +617,53 @@
 
     initialPageLoad = true;
     const pinLastSectionParallax = (entries) => {
-      console.log("attaching");
-      console.log(entries);
+      // console.log("attaching");
+      // console.log(entries);
 
       if (initialPageLoad) {
         initialPageLoad = false;
         return;
       }
 
-      // Return if every handler is registered
-      if (initialPageLoad === false) {
+      // if (
+      //   entries[0].intersectionRatio > 0.9 &&
+      //   entries[0].intersectionRatio <= 1 &&
+      //   !lastSectionParallaxActive
+      // ) {
+      lastSectionContainer.scroll({
+        top: 0,
+        behavior: "smooth",
+      });
+
+      observer.observe(paragraphThree);
+
+      // lastSectionContainer.classList.add("bg-attach-fixed");
+
+      leftContainer.style.overflowY = "scroll";
+      leftContainer.style.height = "100%";
+      leftContainer.style.overscrollBehavior = "contain";
+
+      if (isMobileView()) {
+        leftContainer.addEventListener(
+          "scroll",
+          lastSectionMobileScrollHandler
+        );
       } else {
-        return;
+        handleLastSectionParallax();
       }
-
-      if (
-        entries[0].intersectionRatio > 0.9 &&
-        entries[0].intersectionRatio <= 1 &&
-        !lastSectionParallaxActive
-      ) {
-        lastSectionContainer.scroll({
-          top: 0,
-          behavior: "smooth",
-        });
-
-        console.log("called observing p3");
-        observer.observe(paragraphThree);
-
-        lastSectionContainer.classList.add("bg-attach-fixed");
-
-        leftContainer.style.overflowY = "scroll";
-        leftContainer.style.height = "100%";
-        leftContainer.style.overscrollBehavior = "contain";
-
-        if (isMobileView()) {
-          leftContainer.addEventListener(
-            "scroll",
-            lastSectionMobileScrollHandler
-          );
-        } else {
-          console.log("called");
-          handleLastSectionParallax();
-        }
-      }
+      // }
 
       // Check pThree position
-      if (entries[0].intersectionRatio === 1 && footerHidden()) {
-        lastSectionContainer.classList.remove("bg-attach-fixed");
+      // if (entries[0].intersectionRatio === 1 && footerHidden()) {
+      //   lastSectionContainer.classList.remove("bg-attach-fixed");
 
-        // This shows the main footer
-        lastSectionContainer.nextElementSibling.classList.remove("d-none");
-        // Brings the top portion of the footer into view
-        scrollBy(0, 50);
-        // Disable scroll on last section parallax
-        disableParallaxScrolling();
-      }
+      //   // This shows the main footer
+      //   lastSectionContainer.nextElementSibling.classList.remove("d-none");
+      //   // Brings the top portion of the footer into view
+      //   scrollBy(0, 50);
+      //   // Disable scroll on last section parallax
+      //   disableParallaxScrolling();
+      // }
 
       // Reverse scroll handler
       // if (
