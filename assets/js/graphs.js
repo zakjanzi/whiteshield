@@ -117,7 +117,7 @@ const allChartsDrawn = () => {
 // Set font for Chartjs
 Chart.defaults.font.family = "Montserrat";
 
-// Line chart setup. For the first graph on the page
+// Graph 1 - Line chart setup. 
 const drawLineChart = () => {
   const data = [
     { num_users: 3.5, quarter: "" },
@@ -172,10 +172,11 @@ const drawLineChart = () => {
   const rect = { x: 0, y: 0, prevX: 0 };
   let chartPainted = false;
 
+  // Initialization
   let lineChart = new Chart(document.getElementById("meta-users"), {
     type: "line",
 
-    // A config section
+    // Graph 1 config
     options: {
       responsive: true,
       maintainAspectRatio: false,
@@ -384,15 +385,15 @@ const drawLineChart = () => {
       animation,
     },
     data: {
-      // another config section
-      labels: data.map((row) => row.quarter),
+      // Graph 1 config (continuation)
+      labels: data.map((row) => row.quarter), // X-Axis
       datasets: [
         {
           label: "",
-          data: data.map((row) => row.num_users),
+          data: data.map((row) => row.num_users), // Y-Axis
           borderColor: "#226b8b",
           borderWidth: 5,
-          backgroundColor: function (context) {
+          backgroundColor: function (context) { // Gradient
             const chart = context.chart;
             const { ctx, chartArea } = chart;
 
@@ -427,7 +428,6 @@ const drawLineChart = () => {
     },
   });
 };
-// End line chart setup. This is for the first chart
 
 // Open Data Barometer charts/graph setup. Second chart.
 const drawHorizontalBarChart = () => {
@@ -468,6 +468,7 @@ const drawHorizontalBarChart = () => {
     return window.innerWidth < 768;
   };
 
+  // Graph 2 - note: these are 4 separate bar graphs, not one single graph.
   [
     { id: "g-20", length: 56.8, bgColor: "#236C8B" },
     { id: "world-average", length: 32.5, bgColor: "#236C8B" },
@@ -477,7 +478,7 @@ const drawHorizontalBarChart = () => {
     const chart = new Chart(document.getElementById(horizontalBarChart.id), {
       type: "bar",
       options: {
-        // A config section
+        // Graph 2 config
         indexAxis: "y",
         responsive: true,
         maintainAspectRatio: false,
@@ -487,6 +488,7 @@ const drawHorizontalBarChart = () => {
           },
         },
         scales: {
+          // Y axis
           y: {
             border: {
               display: false,
@@ -501,6 +503,7 @@ const drawHorizontalBarChart = () => {
           },
 
           x: {
+            // X axis
             border: {
               display: false,
             },
@@ -518,7 +521,7 @@ const drawHorizontalBarChart = () => {
         },
       },
       data: {
-        // Another config section
+        // Graph 2 config (continuation)
         labels: [horizontalBarChart.id.toUpperCase().replace("-", " ")],
         datasets: [
           {
@@ -537,7 +540,7 @@ const drawHorizontalBarChart = () => {
   });
 };
 
-// Business Data transparency Index charts setup, Third graph.
+// Graph 3
 const drawBusinessBarChartOne = () => {
   const chartOneData = [
     { id: "Estonia", length: 95 },
@@ -548,7 +551,7 @@ const drawBusinessBarChartOne = () => {
   new Chart(document.getElementById("business-chart-one"), {
     type: "bar",
     options: {
-      // A config section
+      // Graph 3 config
       responsive: true,
       maintainAspectRatio: false,
       barThickness: isDesktopView() ? 60 : 22,
@@ -559,6 +562,7 @@ const drawBusinessBarChartOne = () => {
       },
       scales: {
         y: {
+          // Y axis
           min: 0,
           max: 100,
           ticks: {
@@ -569,6 +573,7 @@ const drawBusinessBarChartOne = () => {
           },
         },
         x: {
+          // X axis
           border: {
             display: false,
           },
@@ -585,7 +590,7 @@ const drawBusinessBarChartOne = () => {
       },
     },
     data: {
-      // Another config section
+      // Graph 3 config (continuation)
       labels: isDesktopView()
         ? ["Estonia", "Latvia", "Sweden"]
         : ["EST", "LVA", "SWE"],
@@ -599,7 +604,7 @@ const drawBusinessBarChartOne = () => {
   });
 };
 
-// Business Data transparency second graph, Fourth graph.
+// Graph 4
 const drawBusinessBarChartTwo = () => {
   const chartTwoData = [
     { country: "UAE", length: 22 },
@@ -610,7 +615,7 @@ const drawBusinessBarChartTwo = () => {
   new Chart(document.getElementById("business-chart-two"), {
     type: "bar",
     options: {
-      // A config section
+      // Graph 4 config
       responsive: true,
       maintainAspectRatio: false,
       barThickness: isDesktopView() ? 60 : 22,
@@ -621,6 +626,7 @@ const drawBusinessBarChartTwo = () => {
       },
       scales: {
         y: {
+          // Y axis
           min: 0,
           max: 100,
           ticks: {
@@ -632,6 +638,7 @@ const drawBusinessBarChartTwo = () => {
           border: { display: false },
         },
         x: {
+          // X axis
           grid: {
             display: false,
           },
@@ -644,7 +651,7 @@ const drawBusinessBarChartTwo = () => {
       },
     },
     data: {
-      // Another config section
+      // Graph 4 config (continuation)
       labels: chartTwoData.map((item) => item.country),
       datasets: [
         {
@@ -656,7 +663,7 @@ const drawBusinessBarChartTwo = () => {
   });
 };
 
-// UAE rank counter. Placed over Fourth graph.
+// UAE rank counter. Placed over graph 4.
 const doRankCounter = () => {
   let counts = setInterval(UAERankCounter);
   let upto = 0;
@@ -670,14 +677,16 @@ const doRankCounter = () => {
     }
   }
 };
+
 // End UAE rank counter
 // End Business data chart
 
 // Dubai dataset chart
 // Please note the following
-// The first elements list of values correlate with that of the second elements of the dubaiDataset
+// The first elements list of values are grouped with the second elements of the dubaiDataset
 // So 7 correlates with 9, and 24 correlates with 10.5.
-// Fifth graph
+
+// Graph 5
 const drawDubaiDatasetChart = () => {
   const dubaiDataset = [
     {
@@ -693,7 +702,7 @@ const drawDubaiDatasetChart = () => {
   new Chart(document.getElementById("dubai-dataset-chart"), {
     type: "bar",
     options: {
-      // A config section
+      // Graph 5 config
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
@@ -703,6 +712,7 @@ const drawDubaiDatasetChart = () => {
       },
       scales: {
         y: {
+          // Y axis
           min: 0,
           max: 25,
           ticks: {
@@ -716,6 +726,7 @@ const drawDubaiDatasetChart = () => {
           },
         },
         x: {
+          // X axis
           grid: {
             display: false,
           },
@@ -729,7 +740,7 @@ const drawDubaiDatasetChart = () => {
       },
     },
     data: {
-      // Another config section
+      // Graph 5 config (continuation)
       labels: ["Building", "Land", "Road", "Vegetation", "Water"],
       datasets: dubaiDataset.map((singleDataset) => {
         return {
