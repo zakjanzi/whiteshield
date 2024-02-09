@@ -216,46 +216,6 @@
       document.body.style.overflowY = "hidden";
     };
 
-    // Start parallax footer line top
-    let init = false;
-    const parallaxStartReached = (entries) => {
-      if (!init) {
-        init = true;
-        return;
-      }
-      //console.log("pstart:", simplifyText.getBoundingClientRect().y);
-
-      return;
-      if (
-        entry.isIntersecting &&
-        entry.intersectionRatio === 1 &&
-        pThreeObserver.intersectionRatio === 1
-      ) {
-        lastSectionContainer.nextElementSibling.classList.add("d-none");
-        //console.log("Element is visible!");
-        // disableBodyScroll();
-        enableParallaxScrolling();
-        // left viewport at the top edge, hence scroll direction is down
-      } else {
-        //console.log("Element is not visible!");
-        disableParallaxScrolling();
-        // observerParallaxFooterTop.unobserve(parallaxFooterTop);
-      }
-    };
-
-    // This intersection observer is used to monitor the top of last section parallax
-    const observerParallaxFooterTop = new IntersectionObserver(
-      parallaxStartReached,
-      {
-        // root: document.querySelector("body"),
-        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
-      }
-    );
-
-    //observerParallaxFooterTop.observe(lastSectionContainer);
-    //observerParallaxFooterTop.observe(paragraphThree);
-
-    // end parallax footer top
     const footerHidden = () => {
       return lastSectionContainer.nextElementSibling.classList.contains(
         "d-none"
@@ -616,6 +576,33 @@
     };
 
     initialPageLoad = true;
+    const parallaxStartReached = ([entry]) => {
+      if (initialPageLoad === true) {
+        initialPageLoad = false;
+        return;
+      }
+
+      if (entry.intersectionRatio === 0 && isMobileView()) {
+        // Scroll up main page a little
+        window.scrollTo(0, scrollY - innerHeight);
+
+        firstOverlayContainer.classList.remove("simplify-fade-in");
+      }
+    };
+
+    // This intersection observer is used to monitor the end reached of last section parallax
+    const observerSimplifyText = new IntersectionObserver(
+      parallaxStartReached,
+      {
+        // root: leftContainer,
+        threshold: [0],
+      }
+    );
+
+    observerSimplifyText.observe(simplifyText);
+    // End parallax scroll content start reached
+
+    initialPageLoad = true;
     const pinLastSectionParallax = (entries) => {
       // console.log("attaching");
       // console.log(entries);
@@ -625,33 +612,34 @@
         return;
       }
 
-      // if (
-      //   entries[0].intersectionRatio > 0.9 &&
-      //   entries[0].intersectionRatio <= 1 &&
-      //   !lastSectionParallaxActive
-      // ) {
-      lastSectionContainer.scroll({
-        top: 0,
-        behavior: "smooth",
-      });
+      if (
+        entries[0].intersectionRatio > 0.8 &&
+        entries[0].intersectionRatio <= 1
+      ) {
+        lastSectionContainer.scroll({
+          top: 0,
+          behavior: "smooth",
+        });
 
-      observer.observe(paragraphThree);
+        // observer.observe(paragraphThree);
 
-      // lastSectionContainer.classList.add("bg-attach-fixed");
+        // lastSectionContainer.classList.add("bg-attach-fixed");
 
-      leftContainer.style.overflowY = "scroll";
-      leftContainer.style.height = "100%";
-      leftContainer.style.overscrollBehavior = "contain";
+        leftContainer.style.overflowY = "scroll";
+        leftContainer.style.height = "100vh";
+        leftContainer.style.overscrollBehavior = "contain";
 
-      if (isMobileView()) {
-        leftContainer.addEventListener(
-          "scroll",
-          lastSectionMobileScrollHandler
-        );
-      } else {
-        handleLastSectionParallax();
+        if (isMobileView()) {
+          firstOverlayContainer.style.zIndex = 15;
+          leftContainerContent.style.zIndex = 20;
+          leftContainer.addEventListener(
+            "scroll",
+            lastSectionMobileScrollHandler
+          );
+        } else {
+          handleLastSectionParallax();
+        }
       }
-      // }
 
       // Check pThree position
       // if (entries[0].intersectionRatio === 1 && footerHidden()) {
